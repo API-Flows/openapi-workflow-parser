@@ -14,6 +14,12 @@ public class OpenAPIWorkflowValidator {
         if (openAPIWorkflow.getInfo() == null) {
             throw new RuntimeException("'Info' is undefined");
         }
+        if (openAPIWorkflow.getInfo().getTitle() == null || openAPIWorkflow.getInfo().getTitle().isEmpty()) {
+            throw new RuntimeException("'Info title' is undefined");
+        }
+        if (openAPIWorkflow.getInfo().getVersion() == null || openAPIWorkflow.getInfo().getVersion().isEmpty()) {
+            throw new RuntimeException("'Info version' is undefined");
+        }
 
         if (openAPIWorkflow.getSourceDescriptions() == null || openAPIWorkflow.getSourceDescriptions().isEmpty()) {
             throw new RuntimeException("'SourceDescriptions' is undefined or empty");

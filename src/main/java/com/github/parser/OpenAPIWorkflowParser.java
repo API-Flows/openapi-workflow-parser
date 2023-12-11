@@ -8,6 +8,7 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.github.model.OpenAPIWorkflow;
 import com.github.parser.source.OperationBinder;
 import com.github.parser.source.WorkflowBinder;
+import com.github.parser.util.HttpUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,7 +19,6 @@ import java.nio.file.Paths;
 public class OpenAPIWorkflowParser {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(OpenAPIWorkflowParser.class);
-
 
     public OpenAPIWorkflowParserResult parse(String location) {
 
@@ -58,11 +58,11 @@ public class OpenAPIWorkflowParser {
         return url != null && url.startsWith("http");
     }
     String getFromUrl(String url) {
-        return null;
+        return new HttpUtil().call(url);
     }
 
     String getFromFile(String filepath) {
-        String content = null;
+        String content;
         try {
             content = new String(Files.readAllBytes(Paths.get(filepath)));
         } catch (IOException e) {
