@@ -6,6 +6,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.github.model.OpenAPIWorkflow;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -13,12 +15,15 @@ import java.nio.file.Paths;
 
 public class OpenAPIWorkflowParser {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(OpenAPIWorkflowParser.class);
+
+
     public OpenAPIWorkflowParserResult parse(String location) {
 
         OpenAPIWorkflowParserResult result = new OpenAPIWorkflowParserResult();
 
         try {
-            String content = null;
+            String content;
 
             if (isUrl(location)) {
                 content = getFromUrl(location);
@@ -30,8 +35,8 @@ public class OpenAPIWorkflowParser {
             result.setOpenAPIWorkflow(mapper.readValue(content, OpenAPIWorkflow.class));
 
         } catch (Exception e) {
+            LOGGER.error(e.getMessage(), e);
             result.setValid(false);
-            throw new RuntimeException(e);
         }
 
         return result;
@@ -67,7 +72,6 @@ public class OpenAPIWorkflowParser {
         objectMapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
         objectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
         objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-
 
         return objectMapper;
     }
