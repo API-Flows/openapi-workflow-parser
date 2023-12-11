@@ -57,6 +57,7 @@ public class OpenAPIWorkflowParser {
     boolean isUrl(String url) {
         return url != null && url.startsWith("http");
     }
+
     String getFromUrl(String url) {
         return new HttpUtil().call(url);
     }

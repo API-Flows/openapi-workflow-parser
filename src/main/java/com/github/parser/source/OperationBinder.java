@@ -4,7 +4,6 @@ import com.github.model.OpenAPIWorkflow;
 import com.github.model.SourceDescription;
 import com.github.model.Step;
 import com.github.model.Workflow;
-import com.github.parser.util.PathUtil;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.Operation;
 import io.swagger.v3.oas.models.PathItem;
@@ -14,6 +13,8 @@ import io.swagger.v3.parser.core.models.SwaggerParseResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,10 +30,8 @@ public class OperationBinder {
         List<Operation> operations = new ArrayList<>();
 
         for(SourceDescription source : openAPIWorkflow.getSourceDescriptions()) {
-            if(source.isOpenApi()) {
-                String filename = new PathUtil().getFolderPath(openAPIWorkflow.getLocation()) + "/" + source.getUrl();
-                operations.addAll(getOperations(filename));
-            }
+            String filename = getRootFolder(openAPIWorkflow.getLocation()) + "/" + source.getUrl();
+            operations.addAll(getOperations(filename));
         }
 
         for(Workflow workflow : openAPIWorkflow.getWorkflows()) {
@@ -41,7 +40,6 @@ public class OperationBinder {
             }
         }
     }
-
 
     List<Operation> getOperations(String openapi) {
         List<Operation> operations = new ArrayList<>();
@@ -66,16 +64,24 @@ public class OperationBinder {
 
         for(Operation o : operations) {
             if(operationId != null && operationId.equals(o.getOperationId())) {
-                if(operation == null) {
-                    operation = o;
-                } else {
-                    // operationId already found!?
-                    // TODO validation
-                    LOGGER.warn("operationId already found {}", operationId);
-                }
+                operation = o;
             }
         }
 
         return operation;
+    }
+
+    String getRootFolder(String location) {
+        if(isUrl(location)) {
+            return location.substring(0, location.lastIndexOf("/") + 1);
+        } else {
+            Path filePath = Paths.get(location);
+
+            return filePath.getParent().toString();
+        }
+    }
+
+    boolean isUrl(String url) {
+        return url != null && url.startsWith("http");
     }
 }
