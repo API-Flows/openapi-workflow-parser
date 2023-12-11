@@ -34,5 +34,12 @@ public class SourceDescription {
     public void setType(String type) {
         this.type = type;
     }
-}
 
+    public boolean isOpenApi() {
+        return "openapi".equals(this.type);
+    }
+
+    public boolean IsWorkflowsSpec() {
+        return "workflowsSpec".equals(this.type);
+    }
+}

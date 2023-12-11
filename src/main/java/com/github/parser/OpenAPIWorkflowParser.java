@@ -6,6 +6,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.github.model.OpenAPIWorkflow;
+import com.github.parser.source.OperationBinder;
+import com.github.parser.source.WorkflowBinder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,7 +34,17 @@ public class OpenAPIWorkflowParser {
             }
 
             final ObjectMapper mapper = getObjectMapper(content);
-            result.setOpenAPIWorkflow(mapper.readValue(content, OpenAPIWorkflow.class));
+
+            OpenAPIWorkflow openAPIWorkflow = mapper.readValue(content, OpenAPIWorkflow.class);
+            openAPIWorkflow.setLocation(location);
+
+            result.setOpenAPIWorkflow(openAPIWorkflow);
+
+            new OpenAPIWorkflowValidator().validate(openAPIWorkflow);
+
+            new OperationBinder().bind(openAPIWorkflow);
+
+            new WorkflowBinder().bind(openAPIWorkflow);
 
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);

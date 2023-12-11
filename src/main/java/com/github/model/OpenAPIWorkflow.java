@@ -4,11 +4,20 @@ import java.util.List;
 
 public class OpenAPIWorkflow {
 
+    private String location;
     private String workflowsSpec;
     private Info info;
     private List<SourceDescription> sourceDescriptions;
     private List<Workflow> workflows;
     private Components components;
+
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
+    }
 
     public String getWorkflowsSpec() {
         return workflowsSpec;
@@ -49,4 +58,5 @@ public class OpenAPIWorkflow {
     public void setComponents(Components components) {
         this.components = components;
     }
+
 }
