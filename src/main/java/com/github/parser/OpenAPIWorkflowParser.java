@@ -9,6 +9,7 @@ import com.github.model.OpenAPIWorkflow;
 import com.github.parser.source.OperationBinder;
 import com.github.parser.source.WorkflowBinder;
 import com.github.parser.util.HttpUtil;
+import com.github.parser.util.PathUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,13 +25,16 @@ public class OpenAPIWorkflowParser {
 
         OpenAPIWorkflowParserResult result = new OpenAPIWorkflowParserResult();
 
+        PathUtil pathUtil = new PathUtil();
+        HttpUtil httpUtil = new HttpUtil();
+
         try {
             String content;
 
-            if (isUrl(location)) {
-                content = getFromUrl(location);
+            if (httpUtil.isUrl(location)) {
+                content = httpUtil.call(location);
             } else {
-                content = getFromFile(location);
+                content = pathUtil.getFromFile(location);
             }
 
             final ObjectMapper mapper = getObjectMapper(content);
@@ -54,24 +58,8 @@ public class OpenAPIWorkflowParser {
         return result;
     }
 
-    boolean isUrl(String url) {
-        return url != null && url.startsWith("http");
-    }
 
-    String getFromUrl(String url) {
-        return new HttpUtil().call(url);
-    }
 
-    String getFromFile(String filepath) {
-        String content;
-        try {
-            content = new String(Files.readAllBytes(Paths.get(filepath)));
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-
-        return content;
-    }
 
     private ObjectMapper getObjectMapper(String content) {
         ObjectMapper objectMapper = null;

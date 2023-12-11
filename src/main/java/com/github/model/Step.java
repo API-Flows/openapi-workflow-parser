@@ -11,7 +11,6 @@ public class Step {
     private String operationId;
     private String operationRef;
     private Operation operation;
-
     private String workflowId;
     private Workflow workflow;
     private String description;

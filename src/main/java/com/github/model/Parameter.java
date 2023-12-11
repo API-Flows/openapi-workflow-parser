@@ -8,7 +8,7 @@ public class Parameter {
     private String in;
     private String value;
     private String target;
-
+    private String style;
 
     @JsonProperty("name")
     public String getName() {
@@ -44,5 +44,13 @@ public class Parameter {
 
     public void setTarget(String target) {
         this.target = target;
+    }
+
+    public String getStyle() {
+        return style;
+    }
+
+    public void setStyle(String style) {
+        this.style = style;
     }
 }
