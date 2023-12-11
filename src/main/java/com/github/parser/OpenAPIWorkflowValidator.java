@@ -2,6 +2,7 @@ package com.github.parser;
 
 import com.github.model.OpenAPIWorkflow;
 import com.github.model.SourceDescription;
+import com.github.model.Step;
 import com.github.model.Workflow;
 
 public class OpenAPIWorkflowValidator {
@@ -47,6 +48,22 @@ public class OpenAPIWorkflowValidator {
             }
             if (workflow.getSteps() == null) {
                 throw new RuntimeException("'Workflow Steps' is undefined");
+            }
+            for(Step step : workflow.getSteps()) {
+                if(step.getStepId() == null || step.getStepId().isEmpty()) {
+                    throw new RuntimeException("'Workflow[" + workflow.getWorkflowId() + "] stepId' is undefined");
+                }
+                if(step.getOperationId() == null && step.getWorkflowId() == null && step.getOperationRef() == null) {
+                    throw new RuntimeException("'Workflow[" + workflow.getWorkflowId() + "]' should provide at least one of the following: [operationId, operationRef, workflowId]");
+                }
+
+                int numAssignedValues = (step.getOperationId() != null ? 1 : 0) +
+                        (step.getWorkflowId() != null ? 1 : 0) +
+                        (step.getOperationRef() != null ? 1 : 0);
+
+                if (numAssignedValues != 1) {
+                    throw new RuntimeException("'Workflow[" + workflow.getWorkflowId() + "]' should provide only one of the following: [operationId, operationRef, workflowId]");
+                }
             }
             i++;
         }
