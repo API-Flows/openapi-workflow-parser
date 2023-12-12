@@ -14,11 +14,9 @@ class WorkflowBinderTest {
 
     private WorkflowBinder binder = new WorkflowBinder();
 
-
-
     @Test
     void bind() {
-        final String WORKFLOWS_SPEC_FILE = "src/test/resources/1.0.0/pet-coupons.workflow.yaml";
+        final String WORKFLOWS_SPEC_FILE = "src/test/java/resources/1.0.0/pet-coupons.workflow.yaml";
 
         OpenAPIWorkflowParserResult result = new OpenAPIWorkflowParser().parse(WORKFLOWS_SPEC_FILE);
 

@@ -6,6 +6,7 @@ import com.github.parser.OpenAPIWorkflowParserResult;
 import io.swagger.v3.oas.models.Operation;
 import org.junit.jupiter.api.Test;
 
+import java.net.MalformedURLException;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -16,7 +17,7 @@ class OperationBinderTest {
 
     @Test
     void getOperations() {
-        final String OPENAPI_FILE = "src/test/resources/1.0.0/pet-coupons.openapi.yaml";
+        final String OPENAPI_FILE = "src/test/java/resources/1.0.0/pet-coupons.openapi.yaml";
         List<Operation> operations = binder.getOperations(OPENAPI_FILE);
 
         assertNotNull(operations);
@@ -35,7 +36,7 @@ class OperationBinderTest {
 
     @Test
     void bind() {
-        final String WORKFLOWS_SPEC_FILE = "src/test/resources/1.0.0/pet-coupons.workflow.yaml";
+        final String WORKFLOWS_SPEC_FILE = "src/test/java/resources/1.0.0/pet-coupons.workflow.yaml";
 
         OpenAPIWorkflowParserResult result = new OpenAPIWorkflowParser().parse(WORKFLOWS_SPEC_FILE);
 
@@ -78,4 +79,6 @@ class OperationBinderTest {
         assertNull(workflowApplyCoupon.getSteps().get(2).getOperationId());
         assertEquals("place-order", workflowApplyCoupon.getSteps().get(2).getWorkflowId());
     }
+
+
 }

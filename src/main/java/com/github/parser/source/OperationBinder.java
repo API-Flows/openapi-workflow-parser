@@ -1,5 +1,8 @@
 package com.github.parser.source;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.TextNode;
 import com.github.model.OpenAPIWorkflow;
 import com.github.model.SourceDescription;
 import com.github.model.Step;
@@ -13,6 +16,9 @@ import io.swagger.v3.parser.core.models.SwaggerParseResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -36,7 +42,11 @@ public class OperationBinder {
 
         for(Workflow workflow : openAPIWorkflow.getWorkflows()) {
             for(Step step : workflow.getSteps()) {
-                step.setOperation(findOperationById(step.getOperationId(), operations));
+                if(step.getOperationId() != null) {
+                    step.setOperation(findOperationById(step.getOperationId(), operations));
+                } else if(step.getOperationRef() != null) {
+                    step.setOperation(findOperationByRef(step.getOperationRef(), operations));
+                }
             }
         }
     }
@@ -70,6 +80,46 @@ public class OperationBinder {
 
         return operation;
     }
+
+    Operation findOperationByRef(String operationRef, List<Operation> operations) {
+        Operation operation = null;
+
+        // TODO
+
+//        for(Operation o : operations) {
+//
+//            if(operationRef != null && operationRef.equals(o.getOperationId())) {
+//                operation = o;
+//            }
+//        }
+
+        return operation;
+    }
+
+
+//
+//    String getJsonReference(String jsonReference) throws IOException {
+//        ObjectMapper objectMapper = new ObjectMapper();
+//
+//        JsonNode jsonNode;
+//
+//        if(isUrl(jsonReference)) {
+//            jsonNode = objectMapper.readTree(new URL(jsonReference));
+//        } else {
+//            jsonNode = objectMapper.readTree(new URL(jsonReference));
+//        }
+//
+//        // Navigate to the node containing the reference
+//        JsonNode referenceNode = jsonNode.at("/paths/users/~1findbystatus~1{status}/get");
+//
+//        // Get the JSON reference as a string
+//        String r = referenceNode.toString();
+//
+//
+//        // Unescape the JSON reference
+//        return jsonNode.isTextual() ? ((TextNode) jsonNode).asText() : jsonReference;
+//
+//    }
 
     String getRootFolder(String location) {
         if(isUrl(location)) {

@@ -9,7 +9,7 @@ class OpenAPIWorkflowParserTest {
 
     @Test
     void parse() {
-        final String WORKFLOWS_SPEC_FILE = "src/test/resources/1.0.0/pet-coupons.workflow.yaml";
+        final String WORKFLOWS_SPEC_FILE = "src/test/java/resources/1.0.0/pet-coupons.workflow.yaml";
 
         OpenAPIWorkflowParserResult result = parser.parse(WORKFLOWS_SPEC_FILE);
         assertNotNull(result.getOpenAPIWorkflow());
