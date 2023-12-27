@@ -3,6 +3,7 @@ package com.apiflows.model;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.models.Operation;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -17,9 +18,11 @@ public class Step {
     private Workflow workflow;
     private String description;
     private String dependsOn;
-    private List<Parameter> parameters;
-    private List<SuccessCriterion> successCriteria;
+    private List<Parameter> parameters = new ArrayList<>();
+    private List<Criterion> successCriteria = new ArrayList<>();
     private Map<String, String> outputs = new HashMap<>();
+    private List<SuccessAction> onSuccess = new ArrayList<>();
+    private List<FailureAction> onFailure = new ArrayList<>();
 
     @JsonProperty("stepId")
     public String getStepId() {
@@ -98,11 +101,11 @@ public class Step {
     }
 
     @JsonProperty("successCriteria")
-    public List<SuccessCriterion> getSuccessCriteria() {
+    public List<Criterion> getSuccessCriteria() {
         return successCriteria;
     }
 
-    public void setSuccessCriteria(List<SuccessCriterion> successCriteria) {
+    public void setSuccessCriteria(List<Criterion> successCriteria) {
         this.successCriteria = successCriteria;
     }
 
@@ -112,5 +115,21 @@ public class Step {
 
     public void setOutputs(Map<String, String> outputs) {
         this.outputs = outputs;
+    }
+
+    public List<SuccessAction> getOnSuccess() {
+        return onSuccess;
+    }
+
+    public void setOnSuccess(List<SuccessAction> onSuccess) {
+        this.onSuccess = onSuccess;
+    }
+
+    public List<FailureAction> getOnFailure() {
+        return onFailure;
+    }
+
+    public void setOnFailure(List<FailureAction> onFailure) {
+        this.onFailure = onFailure;
     }
 }
