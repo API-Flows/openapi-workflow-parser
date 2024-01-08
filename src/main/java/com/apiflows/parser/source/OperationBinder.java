@@ -116,7 +116,9 @@ public class OperationBinder {
 //    }
 
     String getRootFolder(String location) {
-        if(isUrl(location)) {
+        if(location == null) {
+            return ".";
+        } else if(isUrl(location)) {
             return location.substring(0, location.lastIndexOf("/") + 1);
         } else {
             Path filePath = Paths.get(location);
