@@ -1,5 +1,6 @@
 package com.apiflows.parser;
 
+import com.apiflows.model.OpenAPIWorkflow;
 import com.apiflows.model.Step;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
@@ -9,7 +10,7 @@ class OpenAPIWorkflowParserTest {
     private OpenAPIWorkflowParser parser = new OpenAPIWorkflowParser();
 
     @Test
-    void parse() {
+    void parseFromFile() {
         final String WORKFLOWS_SPEC_FILE = "src/test/resources/1.0.0/pet-coupons.workflow.yaml";
 
         OpenAPIWorkflowParserResult result = parser.parse(WORKFLOWS_SPEC_FILE);
@@ -64,5 +65,13 @@ class OpenAPIWorkflowParserTest {
         assertEquals(2, step.getOutputs().size());
     }
 
+    @Test
+    public void isYaml() {
+        final String WORKFLOWS_SPEC_FILE = "src/test/resources/1.0.0/pet-coupons.workflow.yaml";
+
+        OpenAPIWorkflowParserResult result = parser.parse(WORKFLOWS_SPEC_FILE);
+        assertTrue(result.getOpenAPIWorkflow().isYaml());
+        assertFalse(result.getOpenAPIWorkflow().isJson());
+    }
 
 }
