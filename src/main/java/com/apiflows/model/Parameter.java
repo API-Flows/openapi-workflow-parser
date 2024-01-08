@@ -9,6 +9,7 @@ public class Parameter {
     private String value;
     private String target;
     private String style;
+    private String $ref = null;
 
     @JsonProperty("name")
     public String getName() {
@@ -52,5 +53,13 @@ public class Parameter {
 
     public void setStyle(String style) {
         this.style = style;
+    }
+
+    public String get$ref() {
+        return $ref;
+    }
+
+    public void set$ref(String $ref) {
+        this.$ref = $ref;
     }
 }
