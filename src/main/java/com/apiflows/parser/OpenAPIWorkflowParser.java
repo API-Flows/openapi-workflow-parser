@@ -18,6 +18,10 @@ public class OpenAPIWorkflowParser {
     private static final Logger LOGGER = LoggerFactory.getLogger(OpenAPIWorkflowParser.class);
 
     public OpenAPIWorkflowParserResult parse(String location) {
+        return parse(location, new ParseOptions());
+    }
+
+    public OpenAPIWorkflowParserResult parse(String location, ParseOptions options) {
 
         OpenAPIWorkflowParserResult result = new OpenAPIWorkflowParserResult();
 
@@ -37,10 +41,16 @@ public class OpenAPIWorkflowParser {
 
             OpenAPIWorkflow openAPIWorkflow = mapper.readValue(content, OpenAPIWorkflow.class);
             openAPIWorkflow.setLocation(location);
+            openAPIWorkflow.setContent(content);
+            openAPIWorkflow.setFormat(getFormat(content));
 
             result.setOpenAPIWorkflow(openAPIWorkflow);
 
-            new OpenAPIWorkflowValidator().validate(openAPIWorkflow);
+            if(options != null && options.isApplyValidation()) {
+                OpenAPIWorkflowValidatorResult validatorResult = new OpenAPIWorkflowValidator().validate(openAPIWorkflow);
+                result.setValid(validatorResult.isValid());
+                result.setErrors(validatorResult.getErrors());
+            }
 
             new OperationBinder().bind(openAPIWorkflow);
 
@@ -54,13 +64,19 @@ public class OpenAPIWorkflowParser {
         return result;
     }
 
-
+    OpenAPIWorkflow.Format getFormat(String content) {
+        if (content.trim().startsWith("{")) {
+            return OpenAPIWorkflow.Format.JSON;
+        } else {
+            return OpenAPIWorkflow.Format.YAML;
+        }
+    }
 
 
     private ObjectMapper getObjectMapper(String content) {
         ObjectMapper objectMapper = null;
         if (content.trim().startsWith("{")) {
-            objectMapper =  new ObjectMapper();
+            objectMapper = new ObjectMapper();
         } else {
             objectMapper = new ObjectMapper(new YAMLFactory());
         }
