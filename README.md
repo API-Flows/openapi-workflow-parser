@@ -4,12 +4,12 @@
 [![](https://badgen.net/github/license/api-flows/openapi-workflow-parser)](LICENSE)
 [![](https://badgen.net/maven/v/maven-central/com.api-flows/openapi-workflow-parser)](https://repo1.maven.org/maven2/com/api-flows/openapi-workflow-parser/)
 
-Java parser of the [OpenAPI SIG-Workflows specification](https://github.com/OAI/sig-workflows).
+Parsing OpenAPI workflows.
 
 ## Overview
 
-The OpenAPI Workflow parser is an open-source Java library designed to parse the OpenAPI SIG-Workflows specification files. It reads an OpenAPI workflow specifications file (either JSON or YAML formats are supported) and creates the corresponding Java objects.  
-The goal of the parser is to simplifiy the extraction and manipulation of OpenAPI workflows, helping developers in creating applications and tools that leverage the semantic of API flows.
+The OpenAPI Workflow parser is an open-source Java library designed to parse the [OpenAPI SIG-Workflows specification](https://github.com/OAI/sig-workflows) files. It reads an OpenAPI workflow specifications file (JSON or YAML formats are supported) and creates the corresponding Java objects.  
+The parser's goal is to simplifiy the extraction and manipulation of OpenAPI workflows, helping developers create applications and tools that leverage the semantics of API flows.
 
 ## Features
 
