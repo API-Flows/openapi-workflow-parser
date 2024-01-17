@@ -8,8 +8,8 @@ Parsing OpenAPI workflows.
 
 ## Overview
 
-The OpenAPI Workflow parser is an open-source Java library designed to parse the [OpenAPI SIG-Workflows specification](https://github.com/OAI/sig-workflows) files. It reads an OpenAPI workflow specifications file (JSON or YAML formats are supported) and creates the corresponding Java objects.  
-The parser's goal is to simplifiy the extraction and manipulation of OpenAPI workflows, helping developers create applications and tools that leverage the semantics of API flows.
+The OpenAPI Workflow parser is an open-source Java library designed to parse the [OpenAPI SIG-Workflows specification](https://github.com/OAI/sig-workflows) files. It reads an OpenAPI workflow file (JSON or YAML formats are supported) and creates the corresponding Java objects.  
+The parser's goal is to simplify the extraction and manipulation of OpenAPI workflows, helping developers create applications and tools that harness the semantic structure of API flows.
 
 ## Features
 
