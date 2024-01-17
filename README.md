@@ -14,7 +14,7 @@ The parser's goal is to simplify the extraction and manipulation of OpenAPI work
 ## Features
 
 - **Workflow Parsing:** Reads OpenAPI specification files loading the corresponding Java objects.
-- **Ease of Use:** Provides a user-friendly way for developers to parse OpenAPI workflows.
+- **Ease of Use:** Provides a simple way for developers to parse OpenAPI workflows.
 - **Compatibility:** Supports OpenAPI specifications in JSON and YAML formats.
 - **Validation:** Validates the OpenAPI specification according to the [Workflows Specification v1.0.0](https://github.com/OAI/sig-workflows/blob/main/versions/1.0.0.md).
   
