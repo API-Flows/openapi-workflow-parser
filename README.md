@@ -57,5 +57,7 @@ Clone from the GitHub repository
 
 ```bash
   git clone https://github.com/gcatanese/openapi-workflow-parser.git
+  cd openapi-workflow-parser
+  mvn package
 ```
 
