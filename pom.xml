@@ -6,7 +6,7 @@
 
     <groupId>com.api-flows</groupId>
     <artifactId>openapi-workflow-parser</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>0.0.1</version>
 
     <url>https://github.com/api-flows/openapi-workflow-parser</url>
 
@@ -190,6 +190,18 @@
                     <goals>deploy</goals>
                 </configuration>
             </plugin>
+
+            <plugin>
+                <groupId>org.sonatype.central</groupId>
+                <artifactId>central-publishing-maven-plugin</artifactId>
+                <version>0.1.2</version>
+                <extensions>true</extensions>
+                <configuration>
+                    <publishingServerId>central</publishingServerId>
+                    <tokenEnabled>true</tokenEnabled>
+                </configuration>
+            </plugin>
+
         </plugins>
     </build>
 
