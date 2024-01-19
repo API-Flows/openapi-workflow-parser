@@ -1,7 +1,6 @@
 # OpenAPI Workflow Parser
 
-![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)
-[![](https://badgen.net/github/license/api-flows/openapi-workflow-parser)](LICENSE)
+[![](https://badgen.net/github/license/API-Flows/openapi-workflow-parser)](LICENSE)
 [![](https://badgen.net/maven/v/maven-central/com.api-flows/openapi-workflow-parser)](https://repo1.maven.org/maven2/com/api-flows/openapi-workflow-parser/)
 
 Parsing OpenAPI workflows.
