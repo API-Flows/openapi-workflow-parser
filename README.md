@@ -57,7 +57,7 @@ Parse from URL:
 Clone from the GitHub repository
 
 ```bash
-  git clone https://github.com/gcatanese/openapi-workflow-parser.git
+  git clone https://github.com/API-Flows/openapi-workflow-parser.git
   cd openapi-workflow-parser
   mvn package
 ```
