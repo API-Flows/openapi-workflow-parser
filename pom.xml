@@ -40,7 +40,7 @@
 
     <distributionManagement>
         <snapshotRepository>
-            <uniqueVersion>true</uniqueVersion>
+            <uniqueVersion>false</uniqueVersion>
             <id>github</id>
             <url>https://maven.pkg.github.com/API-Flows/openapi-workflow-parser</url>
         </snapshotRepository>
