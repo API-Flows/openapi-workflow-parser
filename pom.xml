@@ -38,6 +38,14 @@
         <url>http://github.com/api-flows/openapi-workflow-parser/tree/master</url>
     </scm>
 
+    <distributionManagement>
+        <snapshotRepository>
+            <uniqueVersion>true</uniqueVersion>
+            <id>github</id>
+            <url>https://maven.pkg.github.com/API-Flows/openapi-workflow-parser</url>
+        </snapshotRepository>
+    </distributionManagement>
+
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
