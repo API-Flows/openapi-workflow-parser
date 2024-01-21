@@ -1,6 +1,5 @@
 package com.apiflows.parser;
 
-import com.apiflows.model.OpenAPIWorkflow;
 import com.apiflows.model.Step;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
@@ -66,12 +65,42 @@ class OpenAPIWorkflowParserTest {
     }
 
     @Test
+    void parseFromJsonFile() {
+        final String WORKFLOWS_SPEC_FILE = "src/test/resources/1.0.0/workflow.json";
+
+        OpenAPIWorkflowParserResult result = parser.parse(WORKFLOWS_SPEC_FILE);
+        assertTrue(result.isJson());
+        assertNotNull(result.getOpenAPIWorkflow());
+        assertEquals("1.0.0", result.getOpenAPIWorkflow().getWorkflowsSpec());
+    }
+
+    @Test
     public void isYaml() {
         final String WORKFLOWS_SPEC_FILE = "src/test/resources/1.0.0/pet-coupons.workflow.yaml";
 
         OpenAPIWorkflowParserResult result = parser.parse(WORKFLOWS_SPEC_FILE);
-        assertTrue(result.getOpenAPIWorkflow().isYaml());
-        assertFalse(result.getOpenAPIWorkflow().isJson());
+        assertTrue(result.isYaml());
+        assertFalse(result.isJson());
     }
 
+    @Test
+    public void getJsonFormat() {
+        final String CONTENT = "{" +
+                "\"workflowsSpec\" : \"1.0.0\"" +
+                "}";
+
+        OpenAPIWorkflowParserResult.Format format = parser.getFormat(CONTENT);
+        assertEquals(OpenAPIWorkflowParserResult.Format.JSON, format);
+    }
+
+    @Test
+    public void getYamlFormat() {
+        final String CONTENT = "" +
+                "workflowsSpec : 1.0.0" +
+                "info:" +
+                "  title: simple\n";
+
+        OpenAPIWorkflowParserResult.Format format = parser.getFormat(CONTENT);
+        assertEquals(OpenAPIWorkflowParserResult.Format.YAML, format);
+    }
 }
