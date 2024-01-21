@@ -17,44 +17,71 @@ public class OpenAPIWorkflowParser {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(OpenAPIWorkflowParser.class);
 
-    public OpenAPIWorkflowParserResult parse(String location) {
-        return parse(location, new ParseOptions());
+    /**
+     * Parse an OpenAPI Workflow file
+     * @param input url, filepath or content (as string)
+     * @return instance of OpenAPIWorkflowParserResult
+     */
+    public OpenAPIWorkflowParserResult parse(String input) {
+        return parse(input, new ParseOptions());
     }
 
-    public OpenAPIWorkflowParserResult parse(String location, ParseOptions options) {
+    /**
+     * Parse an OpenAPI Workflow file
+     * @param input url, filepath or content (as string)
+     * @param options Options
+     * @return instance of OpenAPIWorkflowParserResult
+     */
+    public OpenAPIWorkflowParserResult parse(String input, ParseOptions options) {
 
         OpenAPIWorkflowParserResult result = new OpenAPIWorkflowParserResult();
 
-        PathUtil pathUtil = new PathUtil();
-        HttpUtil httpUtil = new HttpUtil();
-
         try {
+
+            PathUtil pathUtil = new PathUtil();
+            HttpUtil httpUtil = new HttpUtil();
+
             String content;
 
-            if (httpUtil.isUrl(location)) {
-                content = httpUtil.call(location);
+            if (httpUtil.isUrl(input)) {
+                content = httpUtil.call(input);
+                result.setLocation(input);
+            } else if (pathUtil.isFile(input)) {
+                content = pathUtil.getFromFile(input);
+                result.setLocation(input);
             } else {
-                content = pathUtil.getFromFile(location);
+                // content as string
+                content = input;
+                result.setLocation(null);
             }
 
-            final ObjectMapper mapper = getObjectMapper(content);
+            result.setContent(content);
+            result.setFormat(getFormat(content));
 
-            OpenAPIWorkflow openAPIWorkflow = mapper.readValue(content, OpenAPIWorkflow.class);
-            openAPIWorkflow.setLocation(location);
-            openAPIWorkflow.setContent(content);
-            openAPIWorkflow.setFormat(getFormat(content));
+            try {
 
-            result.setOpenAPIWorkflow(openAPIWorkflow);
+                final ObjectMapper mapper = getObjectMapper(content);
 
-            if(options != null && options.isApplyValidation()) {
-                OpenAPIWorkflowValidatorResult validatorResult = new OpenAPIWorkflowValidator().validate(openAPIWorkflow);
-                result.setValid(validatorResult.isValid());
-                result.setErrors(validatorResult.getErrors());
+                OpenAPIWorkflow openAPIWorkflow = mapper.readValue(content, OpenAPIWorkflow.class);
+
+                result.setOpenAPIWorkflow(openAPIWorkflow);
+
+                if(options != null && options.isApplyValidation()) {
+                    OpenAPIWorkflowValidatorResult validatorResult = new OpenAPIWorkflowValidator().validate(openAPIWorkflow);
+                    result.setValid(validatorResult.isValid());
+                    result.setErrors(validatorResult.getErrors());
+                }
+
+                new OperationBinder().bind(openAPIWorkflow, result.getLocation());
+
+                new WorkflowBinder().bind(openAPIWorkflow);
+
+            } catch (Exception e) {
+                LOGGER.error(e.getMessage(), e);
+                result.setValid(false);
+                result.addError(e.getMessage());
             }
 
-            new OperationBinder().bind(openAPIWorkflow);
-
-            new WorkflowBinder().bind(openAPIWorkflow);
 
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
@@ -64,14 +91,13 @@ public class OpenAPIWorkflowParser {
         return result;
     }
 
-    OpenAPIWorkflow.Format getFormat(String content) {
+    OpenAPIWorkflowParserResult.Format getFormat(String content) {
         if (content.trim().startsWith("{")) {
-            return OpenAPIWorkflow.Format.JSON;
+            return OpenAPIWorkflowParserResult.Format.JSON;
         } else {
-            return OpenAPIWorkflow.Format.YAML;
+            return OpenAPIWorkflowParserResult.Format.YAML;
         }
     }
-
 
     private ObjectMapper getObjectMapper(String content) {
         ObjectMapper objectMapper = null;
