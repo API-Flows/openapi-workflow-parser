@@ -39,7 +39,7 @@ class OperationBinderTest {
 
         OpenAPIWorkflowParserResult result = new OpenAPIWorkflowParser().parse(WORKFLOWS_SPEC_FILE);
 
-        binder.bind(result.getOpenAPIWorkflow());
+        binder.bind(result.getOpenAPIWorkflow(), WORKFLOWS_SPEC_FILE);
 
         assertNotNull(result);
         Workflow workflowApplyCoupon = result.getOpenAPIWorkflow().getWorkflows().get(0);
@@ -62,7 +62,7 @@ class OperationBinderTest {
 
         OpenAPIWorkflowParserResult result = new OpenAPIWorkflowParser().parse(WORKFLOWS_SPEC_FILE);
 
-        binder.bind(result.getOpenAPIWorkflow());
+        binder.bind(result.getOpenAPIWorkflow(), WORKFLOWS_SPEC_FILE);
 
         assertNotNull(result);
         Workflow workflowApplyCoupon = result.getOpenAPIWorkflow().getWorkflows().get(0);

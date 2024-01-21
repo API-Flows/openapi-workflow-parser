@@ -4,6 +4,7 @@ import com.apiflows.model.OpenAPIWorkflow;
 import com.apiflows.model.SourceDescription;
 import com.apiflows.model.Step;
 import com.apiflows.model.Workflow;
+import com.apiflows.parser.util.HttpUtil;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.Operation;
 import io.swagger.v3.oas.models.PathItem;
@@ -26,12 +27,18 @@ public class OperationBinder {
      * Binds workflow operations
      * @param openAPIWorkflow
      */
-    public void bind(OpenAPIWorkflow openAPIWorkflow) {
+    public void bind(OpenAPIWorkflow openAPIWorkflow, String location) {
         List<Operation> operations = new ArrayList<>();
 
         for(SourceDescription source : openAPIWorkflow.getSourceDescriptions()) {
-            String filename = getRootFolder(openAPIWorkflow.getLocation()) + "/" + source.getUrl();
-            operations.addAll(getOperations(filename));
+            if(new HttpUtil().isUrl(source.getUrl())) {
+                // absolute url
+                operations.addAll(getOperations(source.getUrl()));
+            } else {
+                // relative path
+                String filename = getRootFolder(location) + "/" + source.getUrl();
+                operations.addAll(getOperations(filename));
+            }
         }
 
         for(Workflow workflow : openAPIWorkflow.getWorkflows()) {
@@ -52,7 +59,20 @@ public class OperationBinder {
         ParseOptions options = new ParseOptions();
         options.setResolve(true);
 
-        SwaggerParseResult parseResult = openApiParser.readLocation(openapi, null, options);
+        SwaggerParseResult parseResult = null;
+
+        try {
+            parseResult = openApiParser.readLocation(openapi, null, options);
+        } catch (Exception e) {
+            LOGGER.error("Cannot find or parse source description: " + openapi, e);
+            throw new RuntimeException("Cannot find or parse source description: " + openapi);
+        }
+
+        if(parseResult == null || parseResult.getOpenAPI() == null) {
+            LOGGER.error("Cannot find or parse source description: " + openapi);
+            throw new RuntimeException("Cannot parse source description: " + openapi);
+        }
+
         OpenAPI openAPI = parseResult.getOpenAPI();
 
         for(PathItem pathItem : openAPI.getPaths().values()) {
@@ -60,7 +80,6 @@ public class OperationBinder {
         }
 
         return operations;
-
     }
 
     Operation findOperationById(String operationId, List<Operation> operations) {
@@ -123,7 +142,7 @@ public class OperationBinder {
         } else {
             Path filePath = Paths.get(location);
 
-            return filePath.getParent().toString();
+            return (filePath.getParent() != null ? filePath.getParent().toString() : null);
         }
     }
 

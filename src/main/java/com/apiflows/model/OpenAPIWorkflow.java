@@ -5,51 +5,11 @@ import java.util.List;
 
 public class OpenAPIWorkflow {
 
-    public enum Format {
-        JSON, YAML
-    }
-
-    private String location;
-    private String content;
-    private Format format;
-
     private String workflowsSpec;
     private Info info;
     private List<SourceDescription> sourceDescriptions = new ArrayList<>();
     private List<Workflow> workflows = new ArrayList<>();
     private Components components;
-
-    public String getLocation() {
-        return location;
-    }
-
-    public void setLocation(String location) {
-        this.location = location;
-    }
-
-    public String getContent() {
-        return content;
-    }
-
-    public void setContent(String content) {
-        this.content = content;
-    }
-
-    public Format getFormat() {
-        return format;
-    }
-
-    public void setFormat(Format format) {
-        this.format = format;
-    }
-
-    public boolean isJson() {
-        return Format.JSON.equals(this.format);
-    }
-
-    public boolean isYaml() {
-        return Format.YAML.equals(this.format);
-    }
 
     public String getWorkflowsSpec() {
         return workflowsSpec;
