@@ -14,4 +14,16 @@ class PathUtilTest {
         assertFalse(pathUtil.getFromFile(WORKFLOWS_SPEC_FILE).isEmpty());
     }
 
+    @Test
+    void isFile() {
+        final String WORKFLOWS_SPEC_FILE = "src/test/resources/1.0.0/pet-coupons.workflow.yaml";
+        assertTrue(pathUtil.isFile(WORKFLOWS_SPEC_FILE));
+    }
+
+    @Test
+    void isFileFalse() {
+        final String WORKFLOWS_SPEC_FILE = "{text}";
+        assertFalse(pathUtil.isFile(WORKFLOWS_SPEC_FILE));
+    }
+
 }
