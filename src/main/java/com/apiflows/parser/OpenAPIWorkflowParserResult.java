@@ -6,9 +6,16 @@ import java.util.List;
 
 public class OpenAPIWorkflowParserResult {
 
+    public enum Format {
+        JSON, YAML
+    }
     private boolean valid = true;
     private List<String> errors = null;
     private OpenAPIWorkflow openAPIWorkflow;
+
+    private String location;
+    private String content;
+    private Format format;
 
     public boolean isValid() {
         return valid;
@@ -37,4 +44,37 @@ public class OpenAPIWorkflowParserResult {
     public void  addError(String error) {
         this.errors.add(error);
     }
+
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
+    }
+
+    public String getContent() {
+        return content;
+    }
+
+    public void setContent(String content) {
+        this.content = content;
+    }
+
+    public Format getFormat() {
+        return format;
+    }
+
+    public void setFormat(Format format) {
+        this.format = format;
+    }
+
+    public boolean isJson() {
+        return Format.JSON.equals(this.format);
+    }
+
+    public boolean isYaml() {
+        return Format.YAML.equals(this.format);
+    }
+
 }
