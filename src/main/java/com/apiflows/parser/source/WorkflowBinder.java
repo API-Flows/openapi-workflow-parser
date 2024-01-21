@@ -33,9 +33,6 @@ public class WorkflowBinder {
         for(Workflow w: workflows) {
             if(workflowId.equals(w.getWorkflowId())) {
                 workflow = w;
-                if(workflow == null) {
-                    workflow = w;
-                }
             }
         }
 
