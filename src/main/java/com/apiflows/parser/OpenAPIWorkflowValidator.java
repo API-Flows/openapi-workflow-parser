@@ -64,6 +64,11 @@ public class OpenAPIWorkflowValidator {
                 if (workflow.getWorkflowId() == null || workflow.getWorkflowId().isEmpty()) {
                     result.addError("'Workflow[" + i + "] workflowId' is undefined");
                 }
+
+                if (!isValidWorkflowId(workflow.getWorkflowId())) {
+                    result.addError("'Workflow[" + i + "] workflowId' format is invalid (should match regex " +  getWorkflowIdRegularExpression() + ")");
+                }
+
                 if (workflow.getSteps() == null) {
                     result.addError("'Workflow " + workflow.getWorkflowId() + "' no Steps are undefined");
                 }
@@ -162,6 +167,10 @@ public class OpenAPIWorkflowValidator {
         return result;
     }
 
+    boolean isValidWorkflowId(String workflowId) {
+        return Pattern.matches(getWorkflowIdRegularExpression(), workflowId);
+    }
+
     boolean isValidStepId(String stepId) {
         return Pattern.matches(getStepIdRegularExpression(), stepId);
     }
@@ -170,6 +179,9 @@ public class OpenAPIWorkflowValidator {
         return "[A-Za-z0-9_\\-]+";
     }
 
+    String getWorkflowIdRegularExpression() {
+        return "[A-Za-z0-9_\\\\-]++";
+    }
     boolean isValidOutputsKey(String key) {
         return Pattern.matches(getOutputsKeyRegularExpression(), key);
     }
