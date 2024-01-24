@@ -16,4 +16,14 @@ class OpenAPIWorkflowValidatorTest {
         assertFalse(result.getErrors().isEmpty());
         assertEquals("'workflowsSpec' is undefined", result.getErrors().get(0));
     }
+
+    @Test
+    void validWorkflowId() {
+        assertTrue(new OpenAPIWorkflowValidator().isValidWorkflowId("idOfTheWorkflow_1"));
+    }
+
+    @Test
+    void invalidWorkflowId() {
+        assertFalse(new OpenAPIWorkflowValidator().isValidWorkflowId("workflow id"));
+    }
 }

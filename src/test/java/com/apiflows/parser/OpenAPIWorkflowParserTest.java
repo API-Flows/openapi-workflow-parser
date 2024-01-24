@@ -30,7 +30,7 @@ class OpenAPIWorkflowParserTest {
 
     @Test
     void parseFromUrl() {
-        final String WORKFLOWS_SPEC_FILE = "https://raw.githubusercontent.com/OAI/sig-workflows/main/examples/1.0.0/pet-coupons.workflow.yaml";
+        final String WORKFLOWS_SPEC_FILE = "https://raw.githubusercontent.com/API-Flows/openapi-workflow-parser/main/src/test/resources/1.0.0/pet-coupons.workflow.yaml";
 
         OpenAPIWorkflowParserResult result = parser.parse(WORKFLOWS_SPEC_FILE);
         assertNotNull(result.getOpenAPIWorkflow());
