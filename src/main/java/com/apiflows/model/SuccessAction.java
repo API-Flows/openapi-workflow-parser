@@ -1,5 +1,6 @@
 package com.apiflows.model;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class SuccessAction {
@@ -39,5 +40,27 @@ public class SuccessAction {
 
     public void setCriteria(List<Criterion> criteria) {
         this.criteria = criteria;
+    }
+
+    public void addCriteria(Criterion criterion) {
+        if(this.criteria == null) {
+            this.criteria = new ArrayList<>();
+        }
+        this.criteria.add(criterion);
+    }
+
+    public SuccessAction type(String type) {
+        this.type = type;
+        return this;
+    }
+
+    public SuccessAction workflowId(String workflowId) {
+        this.workflowId = workflowId;
+        return this;
+    }
+
+    public SuccessAction stepId(String stepId) {
+        this.stepId = stepId;
+        return this;
     }
 }

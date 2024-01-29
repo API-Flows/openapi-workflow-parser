@@ -62,6 +62,11 @@ public class Workflow {
         this.steps = steps;
     }
 
+    public Workflow addStep(Step step) {
+        this.steps.add(step);
+        return this;
+    }
+
     @JsonProperty("outputs")
     public Map<String, String> getOutputs() {
         return outputs;
@@ -70,4 +75,24 @@ public class Workflow {
     public void setOutputs(Map<String, String> outputs) {
         this.outputs = outputs;
     }
+
+    public Workflow workflowId(String workflowId) {
+        this.workflowId = workflowId;
+        return this;
+    }
+
+    public Workflow summary(String summary) {
+        this.summary = summary;
+        return this;
+    }
+    public Workflow description(String description) {
+        this.description = description;
+        return this;
+    }
+
+    public Workflow inputs(Schema inputs) {
+        this.inputs = inputs;
+        return this;
+    }
+
 }

@@ -34,4 +34,20 @@ public class Info {
     public void setDescription(String description) {
         this.description = description;
     }
+
+    public Info title(String title) {
+        this.title = title;
+        return this;
+    }
+
+    public Info version(String version) {
+        this.version = version;
+        return this;
+    }
+
+    public Info description(String description) {
+        this.description = description;
+        return this;
+    }
+
 }

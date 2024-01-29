@@ -132,4 +132,69 @@ public class Step {
     public void setOnFailure(List<FailureAction> onFailure) {
         this.onFailure = onFailure;
     }
+
+    public Step stepId(String stepId) {
+        this.setStepId(stepId);
+        return this;
+    }
+
+    public Step operationId(String operationId) {
+        this.setOperationId(operationId);
+        return this;
+    }
+
+    public Step operationRef(String operationRef) {
+        this.setOperationRef(operationRef);
+        return this;
+    }
+
+    public Step operation(Operation operation) {
+        this.setOperation(operation);
+        return this;
+    }
+
+    public Step workflowId(String workflowId) {
+        this.setWorkflowId(workflowId);
+        return this;
+    }
+
+    public Step workflow(Workflow workflow) {
+        this.setWorkflow(workflow);
+        return this;
+    }
+
+    public Step description(String description) {
+        this.setDescription(description);
+        return this;
+    }
+
+    public Step dependsOn(String dependsOn) {
+        this.setDependsOn(dependsOn);
+        return this;
+    }
+
+    public Step parameters(List<Parameter> parameters) {
+        this.setParameters(parameters);
+        return this;
+    }
+
+    public Step successCriteria(List<Criterion> successCriteria) {
+        this.setSuccessCriteria(successCriteria);
+        return this;
+    }
+
+    public Step outputs(Map<String, String> outputs) {
+        this.setOutputs(outputs);
+        return this;
+    }
+
+    public Step onSuccess(List<SuccessAction> onSuccess) {
+        this.setOnSuccess(onSuccess);
+        return this;
+    }
+
+    public Step onFailure(List<FailureAction> onFailure) {
+        this.setOnFailure(onFailure);
+        return this;
+    }
 }
