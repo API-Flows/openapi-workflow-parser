@@ -67,7 +67,7 @@ public class OpenAPIWorkflowParser {
                 result.setOpenAPIWorkflow(openAPIWorkflow);
 
                 if(options != null && options.isApplyValidation()) {
-                    OpenAPIWorkflowValidatorResult validatorResult = new OpenAPIWorkflowValidator().validate(openAPIWorkflow);
+                    OpenAPIWorkflowValidatorResult validatorResult = new OpenAPIWorkflowValidator(openAPIWorkflow).validate();
                     result.setValid(validatorResult.isValid());
                     result.setErrors(validatorResult.getErrors());
                 }

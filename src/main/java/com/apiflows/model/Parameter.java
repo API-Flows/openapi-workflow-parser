@@ -62,4 +62,35 @@ public class Parameter {
     public void set$ref(String $ref) {
         this.$ref = $ref;
     }
+
+    public Parameter name(String name) {
+        this.name = name;
+        return this;
+    }
+
+    public Parameter in(String in) {
+        this.in = in;
+        return this;
+    }
+
+    public Parameter value(String value) {
+        this.value = value;
+        return this;
+    }
+
+    public Parameter target(String target) {
+        this.target = target;
+        return this;
+    }
+
+    public Parameter style(String style) {
+        this.style = style;
+        return this;
+    }
+
+    public Parameter $ref(String $ref) {
+        this.$ref = $ref;
+        return this;
+    }
+
 }

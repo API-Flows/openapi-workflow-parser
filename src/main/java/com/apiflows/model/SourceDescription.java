@@ -42,4 +42,20 @@ public class SourceDescription {
     public boolean IsWorkflowsSpec() {
         return "workflowsSpec".equals(this.type);
     }
+
+    public SourceDescription name(String name) {
+        this.name = name;
+        return this;
+    }
+
+    public SourceDescription url(String url) {
+        this.url = url;
+        return this;
+    }
+
+    public SourceDescription type(String type) {
+        this.type = type;
+        return this;
+    }
+
 }
