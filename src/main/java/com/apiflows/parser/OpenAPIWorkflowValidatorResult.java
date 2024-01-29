@@ -27,6 +27,9 @@ public class OpenAPIWorkflowValidatorResult {
 
     public void addError(String error) {
         this.errors.add(error);
-        this.valid = false;
+    }
+
+    public void addErrors(List<String> errors) {
+        this.errors.addAll(errors);
     }
 }
