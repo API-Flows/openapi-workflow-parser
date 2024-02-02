@@ -165,6 +165,13 @@ public class OpenAPIWorkflowValidator {
         if(step.getParameters() != null) {
             for(Parameter parameter : step.getParameters()) {
                 errors.addAll(validateParameter(parameter, workflowId));
+
+                if(step.getWorkflowId() != null) {
+                    // when the step in context specifies a workflowId the parameter IN must be defined
+                    if(parameter.getIn() == null) {
+                        errors.add("'Workflow[" + workflowId + "]' parameter IN must be defined");
+                    }
+                }
             }
         }
 
@@ -208,13 +215,6 @@ public class OpenAPIWorkflowValidator {
 
             if(name == null) {
                 errors.add("'Workflow[" + workflowId + "]' parameter has no name");
-            }
-            if(parameter.getIn() == null) {
-                if(name != null) {
-                    errors.add("Parameter '" + name + "' has no type");
-                } else {
-                    errors.add("'Workflow[" + workflowId + "]' parameter has no type");
-                }
             }
             if(parameter.getIn() != null) {
                 if(!SUPPORTED_VALUES.contains(parameter.getIn())) {

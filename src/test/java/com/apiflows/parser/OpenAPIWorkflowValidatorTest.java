@@ -185,6 +185,22 @@ class OpenAPIWorkflowValidatorTest {
     }
 
     @Test
+    void validateStepWithoutInAttribute() {
+        Step step = new Step()
+                .stepId("step-one")
+                .description("First step in the workflow")
+                .workflowId("workflow-id-2");
+        step.addParameter(new Parameter()
+                .name("param")
+                .value("value"));
+
+        String worklowId = "q1";
+
+        assertEquals(1, validator.validateStep(step, worklowId).size());
+    }
+
+
+    @Test
     void validateParameter() {
         Parameter parameter = new Parameter()
                 .name("param")

@@ -100,6 +100,10 @@ public class Step {
         this.parameters = parameters;
     }
 
+    public void addParameter(Parameter parameter) {
+        this.parameters.add(parameter);
+    }
+
     @JsonProperty("successCriteria")
     public List<Criterion> getSuccessCriteria() {
         return successCriteria;
