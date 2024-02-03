@@ -297,7 +297,8 @@ class OpenAPIWorkflowValidatorTest {
 
         Criterion criterion = new Criterion()
                 .condition("$statusCode == 200")
-                .type("simple");
+                .type("simple")
+                .context("$response.body");
 
         assertEquals(0, validator.validateCriterion(criterion, stepId).size());
     }
@@ -317,7 +318,20 @@ class OpenAPIWorkflowValidatorTest {
 
         Criterion criterion = new Criterion()
                 .condition("$statusCode == 200")
-                .type("dummy");
+                .type("dummy")
+                .context("$response.body");
+
+        assertEquals(1, validator.validateCriterion(criterion, stepId).size());
+    }
+
+    @Test
+    void validateCriterionMissingContext() {
+        String stepId = "step-one";
+
+        Criterion criterion = new Criterion()
+                .condition("$statusCode == 200")
+                .type("simple")
+                .context(null);
 
         assertEquals(1, validator.validateCriterion(criterion, stepId).size());
     }
