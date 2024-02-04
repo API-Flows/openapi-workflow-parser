@@ -34,10 +34,11 @@ public class OpenAPIWorkflowValidator {
             result.addError("'workflowsSpec' is undefined");
         }
 
+        // Info
         result.addErrors(validateInfo(openAPIWorkflow.getInfo()));
-
+        // SourceDescriptions
         result.addErrors(validateSourceDescriptions(openAPIWorkflow.getSourceDescriptions()));
-
+        // Workflows
         if (openAPIWorkflow.getWorkflows() == null || openAPIWorkflow.getWorkflows().isEmpty()) {
             result.addError("'Workflows' is undefined");
         }
@@ -53,6 +54,8 @@ public class OpenAPIWorkflowValidator {
                 }
             }
         }
+        // Components
+        result.addErrors(validateComponents(openAPIWorkflow.getComponents()));
 
         if(!result.getErrors().isEmpty()) {
             result.setValid(false);
@@ -318,6 +321,35 @@ public class OpenAPIWorkflowValidator {
         return errors;
     }
 
+    List<String> validateComponents(Components components) {
+        List<String> errors = new ArrayList<>();
+
+        if(components != null) {
+            if (components.getParameters() != null) {
+
+                for(String key : components.getParameters().keySet()) {
+                    if(isValidComponentKey(key)) {
+                        errors.add("'Component parameter " + key + " is invalid (should match regex " + getComponentKeyRegularExpression() + ")");
+                    }
+                }
+
+                for (Parameter parameter : components.getParameters().values()) {
+                    errors.addAll(validateParameter(parameter, "Components"));
+                }
+            }
+            if (components.getInputs() != null) {
+
+                for(String key : components.getInputs().keySet()) {
+                    if(isValidComponentKey(key)) {
+                        errors.add("'Component input " + key + " is invalid (should match regex " + getComponentKeyRegularExpression() + ")");
+                    }
+                }
+
+            }
+        }
+
+        return errors;
+    }
 
     boolean isValidWorkflowId(String workflowId) {
         return Pattern.matches(getWorkflowIdRegularExpression(), workflowId);
@@ -327,6 +359,10 @@ public class OpenAPIWorkflowValidator {
         return Pattern.matches(getStepIdRegularExpression(), stepId);
     }
 
+    boolean isValidComponentKey(String key) {
+        return Pattern.matches(getComponentKeyRegularExpression(), key);
+    }
+
     String getStepIdRegularExpression() {
         return "[A-Za-z0-9_\\-]+";
     }
@@ -334,6 +370,10 @@ public class OpenAPIWorkflowValidator {
     String getWorkflowIdRegularExpression() {
         return "[A-Za-z0-9_\\\\-]++";
     }
+    String getComponentKeyRegularExpression() {
+        return "^[a-zA-Z0-9\\.\\-_]+$";
+    }
+
     boolean isValidOutputsKey(String key) {
         return Pattern.matches(getOutputsKeyRegularExpression(), key);
     }
