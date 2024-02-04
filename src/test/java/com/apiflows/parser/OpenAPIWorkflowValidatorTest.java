@@ -430,6 +430,20 @@ class OpenAPIWorkflowValidatorTest {
     }
 
     @Test
+    void validateComponentsParameterInvalidIn() {
+        Parameter parameter = new Parameter()
+                .name("param")
+                .value("1")
+                .in("dummy");
+        String worklowId = "q1";
+
+        Components components = new Components();
+        components.addParameter("param1", parameter);
+
+        assertEquals(1, validator.validateParameter(parameter, worklowId).size());
+    }
+
+    @Test
     void loadStepsWithDuplicateIds() {
         List<Workflow> list = List.of(
                 new Workflow()
@@ -460,13 +474,23 @@ class OpenAPIWorkflowValidatorTest {
     }
 
     @Test
-    void inalidOutputsKey() {
+    void invalidOutputsKey() {
         assertFalse(new OpenAPIWorkflowValidator().isValidOutputsKey("$tokenExpires"));
     }
 
     @Test
     void invalidOutputsKeyWithSpace() {
         assertFalse(new OpenAPIWorkflowValidator().isValidOutputsKey("$token Expires"));
+    }
+
+    @Test
+    void validComponentKey() {
+        assertTrue(new OpenAPIWorkflowValidator().isValidComponentKey("pagination"));
+    }
+
+    @Test
+    void invalidComponentKey() {
+        assertFalse(new OpenAPIWorkflowValidator().isValidComponentKey("pagination order"));
     }
 
 }
