@@ -493,4 +493,20 @@ class OpenAPIWorkflowValidatorTest {
         assertFalse(new OpenAPIWorkflowValidator().isValidComponentKey("pagination order"));
     }
 
+
+    @Test
+    void isValidJsonPointer() {
+        assertTrue(new OpenAPIWorkflowValidator().isValidJsonPointer("/user/id"));
+    }
+
+    @Test
+    void invalidJsonPointer() {
+        assertFalse(new OpenAPIWorkflowValidator().isValidJsonPointer("user/id"));
+    }
+
+//    @Test
+//    void isValidJsonPointer2() {
+//        assertTrue(new OpenAPIWorkflowValidator().isValidJsonPointer("#/petId"));
+//    }
+
 }

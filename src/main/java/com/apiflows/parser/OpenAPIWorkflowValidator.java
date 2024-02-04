@@ -1,7 +1,8 @@
 package com.apiflows.parser;
 
 import com.apiflows.model.*;
-import io.swagger.models.auth.In;
+import com.fasterxml.jackson.core.JsonPointer;
+import io.swagger.v3.oas.models.media.Schema;
 
 import java.util.*;
 import java.util.regex.Pattern;
@@ -11,6 +12,7 @@ public class OpenAPIWorkflowValidator {
     private OpenAPIWorkflow openAPIWorkflow = null;
     private Set<String> workflowIds = new HashSet<>();
     private Map<String, Set<String>> stepIds = new HashMap<>();
+    private Set<Schema> components = new HashSet<>();
 
     OpenAPIWorkflowValidator() {
     }
@@ -420,6 +422,20 @@ public class OpenAPIWorkflowValidator {
         }
 
         return errors;
+    }
+
+    public boolean isValidJsonPointer(String jsonPointerString) {
+
+        boolean ret;
+
+        try {
+            JsonPointer jsonPointer = JsonPointer.compile(jsonPointerString);
+            ret = true;
+        } catch (IllegalArgumentException e) {
+            ret = false;
+        }
+
+        return ret;
     }
 
 }
