@@ -1,7 +1,8 @@
 package com.apiflows.parser;
 
 import com.apiflows.model.*;
-import io.swagger.models.auth.In;
+import com.fasterxml.jackson.core.JsonPointer;
+import io.swagger.v3.oas.models.media.Schema;
 
 import java.util.*;
 import java.util.regex.Pattern;
@@ -9,8 +10,9 @@ import java.util.regex.Pattern;
 public class OpenAPIWorkflowValidator {
 
     private OpenAPIWorkflow openAPIWorkflow = null;
-    private Set<String> workflowIds = new HashSet<>();
-    private Map<String, Set<String>> stepIds = new HashMap<>();
+    Set<String> workflowIds = new HashSet<>();
+    Map<String, Set<String>> stepIds = new HashMap<>();
+    Set<Schema> components = new HashSet<>();
 
     OpenAPIWorkflowValidator() {
     }
@@ -179,7 +181,7 @@ public class OpenAPIWorkflowValidator {
         }
 
         if(step.getDependsOn() != null) {
-            if(this.stepIds.get(workflowId) == null || !this.stepIds.get(workflowId).contains(step.getDependsOn())) {
+            if(!stepExists(workflowId, step.getDependsOn())) {
                 errors.add("'Step " + stepId + " 'dependsOn' is invalid (no such a step exists)");
             }
 
@@ -193,11 +195,11 @@ public class OpenAPIWorkflowValidator {
         }
 
         for(SuccessAction successAction: step.getOnSuccess()) {
-            errors.addAll(validateSuccessAction(successAction, stepId));
+            errors.addAll(validateSuccessAction(workflowId, stepId, successAction));
         }
 
         for(FailureAction failureAction : step.getOnFailure()) {
-            errors.addAll(validateFailureAction(failureAction, stepId));
+            errors.addAll(validateFailureAction(workflowId, stepId, failureAction));
 
         }
 
@@ -239,7 +241,7 @@ public class OpenAPIWorkflowValidator {
         return errors;
     }
 
-    List<String> validateSuccessAction(SuccessAction successAction, String stepId) {
+    List<String> validateSuccessAction(String workflowId, String stepId, SuccessAction successAction) {
         List<String> SUPPORTED_VALUES = Arrays.asList("end", "goto");
 
         List<String> errors = new ArrayList<>();
@@ -262,10 +264,17 @@ public class OpenAPIWorkflowValidator {
             errors.add("Step " + stepId + " SuccessAction cannot define both workflowId and stepId");
         }
 
+        if(successAction.getStepId() != null && successAction.getType() != null && successAction.getType().equals("goto")) {
+            // when type `goto` stepId must exist (if provided)
+            if (!stepExists(workflowId, successAction.getStepId())) {
+                errors.add("Step " + stepId + " SuccessAction stepId is invalid (no such a step exists)");
+            }
+        }
+
         return errors;
     }
 
-    List<String> validateFailureAction(FailureAction failureAction, String stepId) {
+    List<String> validateFailureAction(String workflowId, String stepId, FailureAction failureAction) {
         List<String> SUPPORTED_VALUES = Arrays.asList("end", "retry", "goto");
 
         List<String> errors = new ArrayList<>();
@@ -297,6 +306,15 @@ public class OpenAPIWorkflowValidator {
             errors.add("Step " + stepId + " FailureAction retryLimit must be non-negative");
 
         }
+
+        if(failureAction.getStepId() != null && failureAction.getType() != null
+                && (failureAction.getType().equals("goto") || failureAction.getType().equals("retry"))) {
+            // when type `goto` or `retry` stepId must exist (if provided)
+            if (!stepExists(workflowId, failureAction.getStepId())) {
+                errors.add("Step " + stepId + " FailureAction stepId is invalid (no such a step exists)");
+            }
+        }
+
 
         return errors;
     }
@@ -420,6 +438,24 @@ public class OpenAPIWorkflowValidator {
         }
 
         return errors;
+    }
+
+    boolean stepExists(String workflowId, String stepId) {
+        return this.stepIds.get(workflowId) != null && this.stepIds.get(workflowId).contains(stepId);
+    }
+
+    public boolean isValidJsonPointer(String jsonPointerString) {
+
+        boolean ret;
+
+        try {
+            JsonPointer jsonPointer = JsonPointer.compile(jsonPointerString);
+            ret = true;
+        } catch (IllegalArgumentException e) {
+            ret = false;
+        }
+
+        return ret;
     }
 
 }
