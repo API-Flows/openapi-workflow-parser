@@ -348,8 +348,8 @@ public class OpenAPIWorkflowValidator {
             if (components.getParameters() != null) {
 
                 for(String key : components.getParameters().keySet()) {
-                    if(isValidComponentKey(key)) {
-                        errors.add("'Component parameter " + key + " is invalid (should match regex " + getComponentKeyRegularExpression() + ")");
+                    if(!isValidComponentKey(key)) {
+                        errors.add("'Component parameter name " + key + " is invalid (should match regex " + getComponentKeyRegularExpression() + ")");
                     }
                 }
 
@@ -358,13 +358,11 @@ public class OpenAPIWorkflowValidator {
                 }
             }
             if (components.getInputs() != null) {
-
                 for(String key : components.getInputs().keySet()) {
-                    if(isValidComponentKey(key)) {
+                    if(!isValidComponentKey(key)) {
                         errors.add("'Component input " + key + " is invalid (should match regex " + getComponentKeyRegularExpression() + ")");
                     }
                 }
-
             }
         }
 
@@ -402,18 +400,24 @@ public class OpenAPIWorkflowValidator {
         return "^[a-zA-Z0-9\\.\\-_]+$";
     }
 
-    List<String> loadWorkflowIds(List<Workflow> workflows) {
+    List<String> loadWorkflowIds(OpenAPIWorkflow openAPIWorkflow) {
         List<String> errors = new ArrayList<>();
 
-        if(workflows != null) {
-            for(Workflow workflow : workflows) {
-                if(!this.workflowIds.add(workflow.getWorkflowId())) {
-                    // id already exists
-                    errors.add("WorkflowId is not unique: " + workflow.getWorkflowId());
-                }
-            }
-        }
+        boolean multipleWorkflowsSpec = getNumWorkflowsSpecSourceDescriptions(openAPIWorkflow.getSourceDescriptions()) > 1 ? true : false;
 
+
+        if(openAPIWorkflow.getWorkflows() != null) {
+            validateWorkflowIdsUniqueness(openAPIWorkflow.getWorkflows());
+
+            for (Workflow workflow : openAPIWorkflow.getWorkflows()) {
+                errors.addAll(validateStepsWorkflowIds(workflow.getSteps(), multipleWorkflowsSpec));
+            }
+
+            for (Workflow workflow : openAPIWorkflow.getWorkflows()) {
+                this.workflowIds.add(workflow.getWorkflowId());
+            }
+
+        }
         return errors;
     }
 
@@ -488,6 +492,35 @@ public class OpenAPIWorkflowValidator {
     boolean stepExists(String workflowId, String stepId) {
         return this.stepIds.get(workflowId) != null && this.stepIds.get(workflowId).contains(stepId);
     }
+
+    List<String> validateWorkflowIdsUniqueness(List<Workflow> workflows) {
+        List<String> errors = new ArrayList<>();
+
+        Set<String> ids = new HashSet<>();
+        for(Workflow workflow : workflows) {
+            if(!ids.add(workflow.getWorkflowId())) {
+                // id already exists
+                errors.add("WorkflowId is not unique: " + workflow.getWorkflowId());
+            }
+        }
+        return errors;
+    }
+
+    List<String> validateStepsWorkflowIds(List<Step> steps, boolean multipleWorkflowsSpecFiles) {
+        List<String> errors = new ArrayList<>();
+
+        for(Step step : steps) {
+            if(multipleWorkflowsSpecFiles) {
+                // must use runtime expression to map applicable SourceDescription
+                if(step.getWorkflowId() != null && !step.getWorkflowId().startsWith("$sourceDescriptions.")) {
+                    errors.add("Operation " + step.getWorkflowId() + " must be specified using a runtime expression (e.g., $sourceDescriptions.<name>.<workflowId>)");
+                }
+            }
+        }
+
+        return errors;
+    }
+
 
     public boolean isValidJsonPointer(String jsonPointerString) {
 
