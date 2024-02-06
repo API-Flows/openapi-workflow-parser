@@ -486,14 +486,14 @@ class OpenAPIWorkflowValidatorTest {
 
 
     @Test
-    void loadWorkflowIWithDuplicateIds() {
+    void validateWorkflowIdsUniqueness() {
         List<Workflow> list = List.of(
                 new Workflow()
                         .workflowId("one"),
                 new Workflow()
                         .workflowId("one"));
 
-        assertEquals(1, validator.loadWorkflowIds(list).size());
+        assertEquals(1, validator.validateWorkflowIdsUniqueness(list).size());
     }
 
     @Test
@@ -511,6 +511,20 @@ class OpenAPIWorkflowValidatorTest {
     }
 
     @Test
+    void validateComponentsParameter() {
+        Parameter parameter = new Parameter()
+                .name("page")
+                .value("1")
+                .in("query");
+        String worklowId = "q1";
+
+        Components components = new Components();
+        components.addParameter("page", parameter);
+
+        assertEquals(0, validator.validateParameter(parameter, worklowId).size());
+    }
+
+    @Test
     void loadStepsWithDuplicateIds() {
         List<Workflow> list = List.of(
                 new Workflow()
@@ -524,6 +538,91 @@ class OpenAPIWorkflowValidatorTest {
         assertEquals(1, validator.loadStepIds(list).size());
     }
 
+    @Test
+    public void getNumOpenApiSourceDescriptions() {
+        List<SourceDescription> sourceDescriptions = List.of(
+                new SourceDescription()
+                        .name("openapifile-1")
+                        .type("openapi"),
+                new SourceDescription()
+                        .name("openapifile-2")
+                        .type("openapi"),
+                new SourceDescription()
+                        .name("workflowspec-1")
+                        .type("workflowsSpec")
+        );
+
+        assertEquals(2, new OpenAPIWorkflowValidator().getNumOpenApiSourceDescriptions(sourceDescriptions));
+    }
+
+    @Test
+    public void getNumWorkflowsSpecSourceDescriptions() {
+        List<SourceDescription> sourceDescriptions = List.of(
+                new SourceDescription()
+                        .name("openapifile-1")
+                        .type("openapi"),
+                new SourceDescription()
+                        .name("openapifile-2")
+                        .type("openapi"),
+                new SourceDescription()
+                        .name("workflowspec-1")
+                        .type("workflowsSpec")
+        );
+
+        assertEquals(1, new OpenAPIWorkflowValidator().getNumWorkflowsSpecSourceDescriptions(sourceDescriptions));
+    }
+
+    @Test
+    public void validateStepsOperationIds() {
+        boolean multipleOpenApiFiles = true;
+
+        List<Step> steps = List.of(
+                new Step()
+                        .stepId("step-one")
+                        .operationId("post-operation")
+        );
+
+        assertEquals(1, new OpenAPIWorkflowValidator().validateStepsOperationIds(steps, multipleOpenApiFiles).size());
+    }
+
+    @Test
+    public void validateStepsOperationIdsWithoutRuntimeExpression() {
+        boolean multipleOpenApiFiles = false;
+
+        List<Step> steps = List.of(
+                new Step()
+                        .stepId("step-one")
+                        .operationId("post-operation")
+        );
+
+        assertEquals(0, new OpenAPIWorkflowValidator().validateStepsOperationIds(steps, multipleOpenApiFiles).size());
+    }
+
+    @Test
+    public void validateStepsWorkflowIds() {
+        boolean multipleWorkflowsSpecFiles = true;
+
+        List<Step> steps = List.of(
+                new Step()
+                        .stepId("step-one")
+                        .workflowId("w2")
+        );
+
+        assertEquals(1, new OpenAPIWorkflowValidator().validateStepsWorkflowIds(steps, multipleWorkflowsSpecFiles).size());
+    }
+
+    @Test
+    public void validateStepsWorkflowIdsWithoutRuntimeExpression() {
+        boolean multipleWorkflowsSpecFiles = false;
+
+        List<Step> steps = List.of(
+                new Step()
+                        .stepId("step-one")
+                        .workflowId("w2")
+        );
+
+        assertEquals(0, new OpenAPIWorkflowValidator().validateStepsWorkflowIds(steps, multipleWorkflowsSpecFiles).size());
+    }
 
     @Test
     void validWorkflowId() {
