@@ -39,7 +39,7 @@ public class SourceDescription {
         return "openapi".equals(this.type);
     }
 
-    public boolean IsWorkflowsSpec() {
+    public boolean isWorkflowsSpec() {
         return "workflowsSpec".equals(this.type);
     }
 
