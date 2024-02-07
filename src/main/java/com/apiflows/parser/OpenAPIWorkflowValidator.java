@@ -493,6 +493,10 @@ public class OpenAPIWorkflowValidator {
         return this.stepIds.get(workflowId) != null && this.stepIds.get(workflowId).contains(stepId);
     }
 
+    boolean workflowExists(String workflowId) {
+        return this.workflowIds.stream().anyMatch(p -> p.contains(workflowId));
+    }
+
     List<String> validateWorkflowIdsUniqueness(List<Workflow> workflows) {
         List<String> errors = new ArrayList<>();
 
