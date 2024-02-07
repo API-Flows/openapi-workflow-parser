@@ -273,6 +273,13 @@ public class OpenAPIWorkflowValidator {
             }
         }
 
+        if(successAction.getWorkflowId() != null && successAction.getType() != null && successAction.getType().equals("goto")) {
+            // when type `goto` workflowId must exist (if provided)
+            if(!workflowExists(workflowId)) {
+                errors.add("Step " + stepId + " SuccessAction workflowId is invalid (no such a workflow exists)");
+            }
+        }
+
         return errors;
     }
 
