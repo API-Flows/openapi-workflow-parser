@@ -625,6 +625,44 @@ class OpenAPIWorkflowValidatorTest {
     }
 
     @Test
+    void stepExists() {
+        OpenAPIWorkflowValidator validator = new OpenAPIWorkflowValidator();
+        Map<String, Set<String>> stepIds = new HashMap<>();
+        stepIds.put("w1", Set.of("step-one", "step-two", "step-three"));
+
+        validator.stepIds = stepIds;
+
+        assertTrue(validator.stepExists("w1", "step-one"));
+    }
+
+    @Test
+    void stepNotFound() {
+        OpenAPIWorkflowValidator validator = new OpenAPIWorkflowValidator();
+        Map<String, Set<String>> stepIds = new HashMap<>();
+        stepIds.put("w1", Set.of("step-one", "step-two", "step-three"));
+
+        validator.stepIds = stepIds;
+
+        assertFalse(validator.stepExists("w1", "step-dummy"));
+    }
+
+    @Test
+    void workflowExists() {
+        OpenAPIWorkflowValidator validator = new OpenAPIWorkflowValidator();
+        validator.workflowIds.add("w1");
+
+        assertTrue(validator.workflowExists("w1"));
+    }
+
+    @Test
+    void workflowNotFound() {
+        OpenAPIWorkflowValidator validator = new OpenAPIWorkflowValidator();
+        validator.workflowIds.add("w1");
+
+        assertFalse(validator.workflowExists("dummy"));
+    }
+
+    @Test
     void validWorkflowId() {
         assertTrue(new OpenAPIWorkflowValidator().isValidWorkflowId("idOfTheWorkflow_1"));
     }
