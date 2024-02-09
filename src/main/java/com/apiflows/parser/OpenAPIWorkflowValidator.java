@@ -171,7 +171,7 @@ public class OpenAPIWorkflowValidator {
 
         if(step.getParameters() != null) {
             for(Parameter parameter : step.getParameters()) {
-                errors.addAll(validateParameter(parameter, workflowId));
+                errors.addAll(validateParameter(parameter, workflowId, null));
 
                 if(step.getWorkflowId() != null) {
                     // when the step in context specifies a workflowId the parameter IN must be defined
@@ -208,8 +208,17 @@ public class OpenAPIWorkflowValidator {
         return errors;
     }
 
-    List<String> validateParameter(Parameter parameter, String workflowId ) {
+    List<String> validateParameter(Parameter parameter, String workflowId, String componentName ) {
         List<String> SUPPORTED_VALUES = Arrays.asList("path", "query", "header", "cookie", "body", "workflow");
+
+        String source;
+
+        if(workflowId != null) {
+            source = "Workflow[" + workflowId + "]";
+        } else {
+            source = "Component[" + componentName + "]";
+
+        }
 
         List<String> errors = new ArrayList<>();
 
@@ -221,27 +230,27 @@ public class OpenAPIWorkflowValidator {
             String name = parameter.getName();
 
             if(name == null) {
-                errors.add("'Workflow[" + workflowId + "]' parameter has no name");
+                errors.add(source + " parameter has no name");
             }
             if(parameter.getIn() != null) {
                 if(!SUPPORTED_VALUES.contains(parameter.getIn())) {
                     if(name != null) {
-                        errors.add("Parameter '" + name + "' type (" + parameter.getIn() + ") is invalid");
+                        errors.add(source +  "parameter " + name + " type (" + parameter.getIn() + ") is invalid");
                     } else {
-                        errors.add("'Workflow[" + workflowId + "]' parameter type (" + parameter.getIn() + ") is invalid");
+                        errors.add(source + " parameter type (" + parameter.getIn() + ") is invalid");
                     }
                 }
             }
             if(parameter.getValue() == null) {
                 if(name != null) {
-                    errors.add("Parameter '" + name + "' has no value");
+                    errors.add(source + " parameter " + name + " has no value");
                 } else {
-                    errors.add("'Workflow[" + workflowId + "]' parameter has no value");
+                    errors.add(source + " parameter has no value");
                 }
             }
             if(parameter.getTarget() != null) {
                 if(!isValidJsonPointer(parameter.getTarget())) {
-                    errors.add("Parameter '" + name + "' target is not a valid Json Pointer");
+                    errors.add(source + " parameter " + name + " target is not a valid Json Pointer");
                 }
             }
         }
@@ -365,9 +374,9 @@ public class OpenAPIWorkflowValidator {
                     }
                 }
 
-                for (Parameter parameter : components.getParameters().values()) {
-                    errors.addAll(validateParameter(parameter, "Components"));
-                }
+                components.getParameters().entrySet().stream()
+                        .forEach(entry -> errors.addAll(validateParameter(entry.getValue(), null, entry.getKey())));
+
             }
             if (components.getInputs() != null) {
                 for(String key : components.getInputs().keySet()) {
