@@ -239,6 +239,11 @@ public class OpenAPIWorkflowValidator {
                     errors.add("'Workflow[" + workflowId + "]' parameter has no value");
                 }
             }
+            if(parameter.getTarget() != null) {
+                if(!isValidJsonPointer(parameter.getTarget())) {
+                    errors.add("Parameter '" + name + "' target is not a valid Json Pointer");
+                }
+            }
         }
         return errors;
     }
