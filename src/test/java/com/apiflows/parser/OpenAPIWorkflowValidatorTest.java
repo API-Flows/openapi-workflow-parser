@@ -207,7 +207,7 @@ class OpenAPIWorkflowValidatorTest {
                 .in("path");
         String worklowId = "q1";
 
-        assertEquals(0, validator.validateParameter(parameter, worklowId).size());
+        assertEquals(0, validator.validateParameter(parameter, worklowId, null).size());
     }
 
     @Test
@@ -218,7 +218,7 @@ class OpenAPIWorkflowValidatorTest {
                 .in("dummy");
         String worklowId = "q1";
 
-        assertEquals(1, validator.validateParameter(parameter, worklowId).size());
+        assertEquals(1, validator.validateParameter(parameter, worklowId, null).size());
     }
 
     @Test
@@ -229,7 +229,7 @@ class OpenAPIWorkflowValidatorTest {
                 .in("query");
         String worklowId = "q1";
 
-        assertEquals(1, validator.validateParameter(parameter, worklowId).size());
+        assertEquals(1, validator.validateParameter(parameter, worklowId, null).size());
     }
 
     @Test
@@ -502,12 +502,12 @@ class OpenAPIWorkflowValidatorTest {
                 .name("param")
                 .value("1")
                 .in("dummy");
-        String worklowId = "q1";
+        String componentName = "user";
 
         Components components = new Components();
         components.addParameter("param1", parameter);
 
-        assertEquals(1, validator.validateParameter(parameter, worklowId).size());
+        assertEquals(1, validator.validateParameter(parameter, null, componentName).size());
     }
 
     @Test
@@ -516,12 +516,12 @@ class OpenAPIWorkflowValidatorTest {
                 .name("page")
                 .value("1")
                 .in("query");
-        String worklowId = "q1";
+        String componentName = "user";
 
         Components components = new Components();
         components.addParameter("page", parameter);
 
-        assertEquals(0, validator.validateParameter(parameter, worklowId).size());
+        assertEquals(0, validator.validateParameter(parameter, null, componentName).size());
     }
 
     @Test
