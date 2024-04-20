@@ -188,7 +188,7 @@ class OpenAPIWorkflowValidatorTest {
         Step step = new Step()
                 .stepId("step-one")
                 .description("First step in the workflow")
-                .workflowId("workflow-id-2");
+                .operationId("op-id-2");
         step.addParameter(new Parameter()
                 .name("param")
                 .value("value"));
@@ -198,6 +198,27 @@ class OpenAPIWorkflowValidatorTest {
         assertEquals(1, validator.validateStep(step, worklowId).size());
     }
 
+    @Test
+    void validateReusableParameter() {
+        Parameter parameter = new Parameter()
+                .name("$components.parameters.page")
+                .value("1");
+        String worklowId = "q1";
+
+        assertEquals(0, validator.validateReusableParameter(parameter, worklowId, null).size());
+    }
+
+    @Test
+    void validateReusableParameterWithInAttribute() {
+        Parameter parameter = new Parameter()
+                .name("$components.parameters.page")
+                .value("1")
+                .in("query");
+        String worklowId = "q1";
+
+        // error: must not define IN attribute
+        assertEquals(1, validator.validateReusableParameter(parameter, worklowId, null).size());
+    }
 
     @Test
     void validateParameter() {
