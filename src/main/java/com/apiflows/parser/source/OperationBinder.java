@@ -58,7 +58,6 @@ public class OperationBinder {
 
         ParseOptions options = new ParseOptions();
         options.setResolve(true);
-
         SwaggerParseResult parseResult = null;
 
         try {

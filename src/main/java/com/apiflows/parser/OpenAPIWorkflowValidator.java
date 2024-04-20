@@ -171,11 +171,14 @@ public class OpenAPIWorkflowValidator {
 
         if(step.getParameters() != null) {
             for(Parameter parameter : step.getParameters()) {
-                errors.addAll(validateParameter(parameter, workflowId, null));
-
-                if(step.getWorkflowId() != null) {
-                    // when the step in context specifies a workflowId the parameter IN must be defined
-                    if(parameter.getIn() == null) {
+                if(isRuntimeExpression(parameter.getName())) {
+                    errors.addAll(validateReusableParameter(parameter, workflowId, null));
+                } else {
+                    errors.addAll(validateParameter(parameter, workflowId, null));
+                }
+                if(step.getWorkflowId() == null) {
+                    // when the step in context is NOT a workflowId the parameter IN must be defined
+                    if(!isRuntimeExpression(parameter.getName()) && parameter.getIn() == null) {
                         errors.add("'Workflow[" + workflowId + "]' parameter IN must be defined");
                     }
                 }
@@ -208,12 +211,12 @@ public class OpenAPIWorkflowValidator {
         return errors;
     }
 
-    List<String> validateParameter(Parameter parameter, String workflowId, String componentName ) {
+    List<String> validateParameter(Parameter parameter, String workflowId, String componentName) {
         List<String> SUPPORTED_VALUES = Arrays.asList("path", "query", "header", "cookie", "body", "workflow");
 
         String source;
 
-        if(workflowId != null) {
+        if (workflowId != null) {
             source = "Workflow[" + workflowId + "]";
         } else {
             source = "Component[" + componentName + "]";
@@ -222,37 +225,57 @@ public class OpenAPIWorkflowValidator {
 
         List<String> errors = new ArrayList<>();
 
-        if(parameter.get$ref() != null) {
-            // Reference object
-            // check is URI
+        // Parameter object
+        String name = parameter.getName();
+
+        if (name == null) {
+            errors.add(source + " parameter has no name");
+        }
+        if (parameter.getIn() != null) {
+            if (!SUPPORTED_VALUES.contains(parameter.getIn())) {
+                if (name != null) {
+                    errors.add(source + "parameter " + name + " in (" + parameter.getIn() + ") is invalid");
+                } else {
+                    errors.add(source + " parameter in (" + parameter.getIn() + ") is invalid");
+                }
+            }
+        }
+        if (parameter.getValue() == null) {
+            if (name != null) {
+                errors.add(source + " parameter " + name + " has no value");
+            } else {
+                errors.add(source + " parameter has no value");
+            }
+        }
+        if(isRuntimeExpression(parameter.getName())) {
+            errors.add(source + " parameter " + name + " is a Reusable Parameter object");
+        }
+
+        return errors;
+    }
+
+    List<String> validateReusableParameter(Parameter parameter, String workflowId, String componentName ) {
+
+        String source;
+
+        if(workflowId != null) {
+            source = "Workflow[" + workflowId + "]";
         } else {
-            // Parameter object
+            source = "Component[" + componentName + "]";
+        }
+
+        List<String> errors = new ArrayList<>();
+
+        if(isRuntimeExpression(parameter.getName())) {
+            // Reusable Parameter object
             String name = parameter.getName();
 
-            if(name == null) {
-                errors.add(source + " parameter has no name");
-            }
             if(parameter.getIn() != null) {
-                if(!SUPPORTED_VALUES.contains(parameter.getIn())) {
-                    if(name != null) {
-                        errors.add(source +  "parameter " + name + " type (" + parameter.getIn() + ") is invalid");
-                    } else {
-                        errors.add(source + " parameter type (" + parameter.getIn() + ") is invalid");
-                    }
-                }
+                errors.add(source +  "parameter " + name + " in (" + parameter.getIn() + ") should not be provided for a Reusable Parameter Object");
             }
-            if(parameter.getValue() == null) {
-                if(name != null) {
-                    errors.add(source + " parameter " + name + " has no value");
-                } else {
-                    errors.add(source + " parameter has no value");
-                }
-            }
-            if(parameter.getTarget() != null) {
-                if(!isValidJsonPointer(parameter.getTarget())) {
-                    errors.add(source + " parameter " + name + " target is not a valid Json Pointer");
-                }
-            }
+
+            // TODO: check reusable parameter exists in Components
+
         }
         return errors;
     }
@@ -559,6 +582,10 @@ public class OpenAPIWorkflowValidator {
         }
 
         return ret;
+    }
+
+    boolean isRuntimeExpression(String name) {
+        return name.startsWith("$");
     }
 
 }
