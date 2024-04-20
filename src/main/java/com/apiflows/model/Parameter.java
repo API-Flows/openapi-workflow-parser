@@ -7,9 +7,7 @@ public class Parameter {
     private String name;
     private String in;
     private String value;
-    private String target;
     private String style;
-    private String $ref = null;
 
     @JsonProperty("name")
     public String getName() {
@@ -38,29 +36,12 @@ public class Parameter {
         this.value = value;
     }
 
-    @JsonProperty("target")
-    public String getTarget() {
-        return target;
-    }
-
-    public void setTarget(String target) {
-        this.target = target;
-    }
-
     public String getStyle() {
         return style;
     }
 
     public void setStyle(String style) {
         this.style = style;
-    }
-
-    public String get$ref() {
-        return $ref;
-    }
-
-    public void set$ref(String $ref) {
-        this.$ref = $ref;
     }
 
     public Parameter name(String name) {
@@ -78,18 +59,8 @@ public class Parameter {
         return this;
     }
 
-    public Parameter target(String target) {
-        this.target = target;
-        return this;
-    }
-
     public Parameter style(String style) {
         this.style = style;
-        return this;
-    }
-
-    public Parameter $ref(String $ref) {
-        this.$ref = $ref;
         return this;
     }
 
