@@ -36,7 +36,7 @@ public class OperationBinder {
                 operations.addAll(getOperations(source.getUrl()));
             } else {
                 // relative path
-                String filename = getRootFolder(location) + "/" + source.getUrl();
+                String filename = getRootFolder(location) + source.getUrl();
                 operations.addAll(getOperations(filename));
             }
         }
@@ -135,13 +135,13 @@ public class OperationBinder {
 
     String getRootFolder(String location) {
         if(location == null) {
-            return ".";
+            return "";
         } else if(isUrl(location)) {
-            return location.substring(0, location.lastIndexOf("/") + 1);
+            return location.substring(0, location.lastIndexOf("/") + 1) + "/";
         } else {
             Path filePath = Paths.get(location);
 
-            return (filePath.getParent() != null ? filePath.getParent().toString() : null);
+            return (filePath.getParent() != null ? filePath.getParent().toString() + "/" : null);
         }
     }
 
