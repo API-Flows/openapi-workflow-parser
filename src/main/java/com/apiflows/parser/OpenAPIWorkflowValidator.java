@@ -585,7 +585,7 @@ public class OpenAPIWorkflowValidator {
     }
 
     boolean isRuntimeExpression(String name) {
-        return name.startsWith("$");
+        return name != null && name.startsWith("$");
     }
 
 }
