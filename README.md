@@ -61,3 +61,25 @@ Clone from the GitHub repository
   mvn package
 ```
 
+## Use snapshots
+
+Add the Maven repository for the OpenAPI workflow parser snapshots:
+```xml
+ <repositories>
+    <repository>
+      <id>github</id>
+      <url>https://maven.pkg.github.com/API-Flows/openapi-workflow-parser</url>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+    </repository>
+  </repositories>
+```
+Add the SNAPSHOT dependency ([check latest](pom.xml) available) in your POM file:
+```xml
+    <dependency>
+      <groupId>com.api-flows</groupId>
+      <artifactId>openapi-workflow-parser</artifactId>
+      <version>0.0.2-SNAPSHOT</version>
+    </dependency>
+```
