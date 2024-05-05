@@ -2,6 +2,7 @@
 
 [![](https://badgen.net/github/license/API-Flows/openapi-workflow-parser)](LICENSE)
 [![](https://badgen.net/maven/v/maven-central/com.api-flows/openapi-workflow-parser)](https://repo1.maven.org/maven2/com/api-flows/openapi-workflow-parser/)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=API-Flows_openapi-workflow-parser&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=API-Flows_openapi-workflow-parser)
 
 Parsing OpenAPI workflows.
 
