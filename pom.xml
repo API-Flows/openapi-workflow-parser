@@ -52,7 +52,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
         <slf4j-version>2.0.13</slf4j-version>
-        <jackson-version>2.17.0</jackson-version>
+        <jackson-version>2.17.1</jackson-version>
         <swagger-parser.version>2.1.22</swagger-parser.version>
     </properties>
 
