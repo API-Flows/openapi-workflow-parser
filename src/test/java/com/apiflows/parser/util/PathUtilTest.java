@@ -10,13 +10,13 @@ class PathUtilTest {
 
     @Test
     void getFromFile() {
-        final String WORKFLOWS_SPEC_FILE = "src/test/resources/1.0.0/pet-coupons.workflow.yaml";
+        final String WORKFLOWS_SPEC_FILE = "src/test/resources/1.0.0/pet-coupons.arazzo.yaml";
         assertFalse(pathUtil.getFromFile(WORKFLOWS_SPEC_FILE).isEmpty());
     }
 
     @Test
     void isFile() {
-        final String WORKFLOWS_SPEC_FILE = "src/test/resources/1.0.0/pet-coupons.workflow.yaml";
+        final String WORKFLOWS_SPEC_FILE = "src/test/resources/1.0.0/pet-coupons.arazzo.yaml";
         assertTrue(pathUtil.isFile(WORKFLOWS_SPEC_FILE));
     }
 
