@@ -34,7 +34,7 @@ public class OpenAPIWorkflowValidator {
 
         OpenAPIWorkflowValidatorResult result = new OpenAPIWorkflowValidatorResult();
         
-        if (openAPIWorkflow.getWorkflowsSpec() == null || openAPIWorkflow.getWorkflowsSpec().isEmpty()) {
+        if (openAPIWorkflow.getArazzo() == null || openAPIWorkflow.getArazzo().isEmpty()) {
             result.addError("'workflowsSpec' is undefined");
         }
 

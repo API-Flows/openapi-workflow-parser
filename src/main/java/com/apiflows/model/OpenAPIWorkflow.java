@@ -5,18 +5,18 @@ import java.util.List;
 
 public class OpenAPIWorkflow {
 
-    private String workflowsSpec;
+    private String arazzo;
     private Info info;
     private List<SourceDescription> sourceDescriptions = new ArrayList<>();
     private List<Workflow> workflows = new ArrayList<>();
     private Components components;
 
-    public String getWorkflowsSpec() {
-        return workflowsSpec;
+    public String getArazzo() {
+        return arazzo;
     }
 
-    public void setWorkflowsSpec(String workflowsSpec) {
-        this.workflowsSpec = workflowsSpec;
+    public void setArazzo(String arazzo) {
+        this.arazzo = arazzo;
     }
 
     public Info getInfo() {
