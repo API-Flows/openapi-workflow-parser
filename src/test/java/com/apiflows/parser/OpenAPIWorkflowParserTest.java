@@ -34,7 +34,7 @@ class OpenAPIWorkflowParserTest {
 
         OpenAPIWorkflowParserResult result = parser.parse(WORKFLOWS_SPEC_FILE);
         assertNotNull(result.getOpenAPIWorkflow());
-        assertEquals("1.0.0-prerelease", result.getOpenAPIWorkflow().getArazzo());
+        assertEquals("1.0.0", result.getOpenAPIWorkflow().getArazzo());
         assertNotNull(result.getOpenAPIWorkflow().getInfo());
         assertEquals("Petstore - Apply Coupons", result.getOpenAPIWorkflow().getInfo().getTitle());
     }
