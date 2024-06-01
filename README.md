@@ -8,7 +8,7 @@ Parsing API workflows.
 
 ## Overview
 
-The OpenAPI Workflow parser is an open-source Java library designed to parse the [OAI Arazzo specification](https://https://github.com/OAI/Arazzo-Specification/) files. It reads an Arazzo file (JSON or YAML formats are supported) and creates the corresponding Java objects.  
+The OpenAPI Workflow parser is an open-source Java library designed to parse the [OAI Arazzo specification](https://github.com/OAI/Arazzo-Specification/) files. It reads an Arazzo file (JSON or YAML formats are supported) and creates the corresponding Java objects.  
 
 The parser's goal is to simplify the extraction and manipulation of workflows, helping developers create applications and tools that harness the semantic structure of API flows.
 
@@ -17,7 +17,7 @@ The parser's goal is to simplify the extraction and manipulation of workflows, h
 - **Workflow Parsing:** Reads OAI Arazzo specification files loading the corresponding Java objects.
 - **Ease of Use:** Provides a simple way for developers to parse workflows.
 - **Compatibility:** Supports both JSON and YAML formats.
-- **Validation:** Validates the specification according to the [Arazzo Specification v1.0.0](https://https://github.com/OAI/Arazzo-Specification/).
+- **Validation:** Validates the specification according to the [Arazzo Specification v1.0.0](https://github.com/OAI/Arazzo-Specification/).
   
 ## Usage
 
