@@ -10,11 +10,11 @@ class OpenAPIWorkflowParserTest {
 
     @Test
     void parseFromFile() {
-        final String WORKFLOWS_SPEC_FILE = "src/test/resources/1.0.0/pet-coupons.workflow.yaml";
+        final String WORKFLOWS_SPEC_FILE = "src/test/resources/1.0.0/pet-coupons.arazzo.yaml";
 
         OpenAPIWorkflowParserResult result = parser.parse(WORKFLOWS_SPEC_FILE);
         assertNotNull(result.getOpenAPIWorkflow());
-        assertEquals("1.0.0-prerelease", result.getOpenAPIWorkflow().getWorkflowsSpec());
+        assertEquals("1.0.0", result.getOpenAPIWorkflow().getArazzo());
         assertNotNull(result.getOpenAPIWorkflow().getInfo());
         assertEquals("Petstore - Apply Coupons", result.getOpenAPIWorkflow().getInfo().getTitle());
         assertNotNull(result.getOpenAPIWorkflow().getComponents());
@@ -30,11 +30,11 @@ class OpenAPIWorkflowParserTest {
 
     @Test
     void parseFromUrl() {
-        final String WORKFLOWS_SPEC_FILE = "https://raw.githubusercontent.com/API-Flows/openapi-workflow-parser/main/src/test/resources/1.0.0/pet-coupons.workflow.yaml";
+        final String WORKFLOWS_SPEC_FILE = "https://raw.githubusercontent.com/API-Flows/openapi-workflow-parser/main/src/test/resources/1.0.0/pet-coupons.arazzo.yaml";
 
         OpenAPIWorkflowParserResult result = parser.parse(WORKFLOWS_SPEC_FILE);
         assertNotNull(result.getOpenAPIWorkflow());
-        assertEquals("1.0.0-prerelease", result.getOpenAPIWorkflow().getWorkflowsSpec());
+        assertEquals("1.0.0-prerelease", result.getOpenAPIWorkflow().getArazzo());
         assertNotNull(result.getOpenAPIWorkflow().getInfo());
         assertEquals("Petstore - Apply Coupons", result.getOpenAPIWorkflow().getInfo().getTitle());
     }
@@ -71,12 +71,12 @@ class OpenAPIWorkflowParserTest {
         OpenAPIWorkflowParserResult result = parser.parse(WORKFLOWS_SPEC_FILE);
         assertTrue(result.isJson());
         assertNotNull(result.getOpenAPIWorkflow());
-        assertEquals("1.0.0", result.getOpenAPIWorkflow().getWorkflowsSpec());
+        assertEquals("1.0.0", result.getOpenAPIWorkflow().getArazzo());
     }
 
     @Test
     public void isYaml() {
-        final String WORKFLOWS_SPEC_FILE = "src/test/resources/1.0.0/pet-coupons.workflow.yaml";
+        final String WORKFLOWS_SPEC_FILE = "src/test/resources/1.0.0/pet-coupons.arazzo.yaml";
 
         OpenAPIWorkflowParserResult result = parser.parse(WORKFLOWS_SPEC_FILE);
         assertTrue(result.isYaml());

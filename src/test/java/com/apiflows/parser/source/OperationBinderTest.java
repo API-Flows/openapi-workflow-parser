@@ -35,7 +35,7 @@ class OperationBinderTest {
 
     @Test
     void bind() {
-        final String WORKFLOWS_SPEC_FILE = "src/test/resources/1.0.0/pet-coupons.workflow.yaml";
+        final String WORKFLOWS_SPEC_FILE = "src/test/resources/1.0.0/pet-coupons.arazzo.yaml";
 
         OpenAPIWorkflowParserResult result = new OpenAPIWorkflowParser().parse(WORKFLOWS_SPEC_FILE);
 
@@ -58,7 +58,7 @@ class OperationBinderTest {
 
     @Test
     void bindFromUrl() {
-        final String WORKFLOWS_SPEC_FILE = "https://raw.githubusercontent.com/OAI/sig-workflows/main/examples/1.0.0/pet-coupons.workflow.yaml";
+        final String WORKFLOWS_SPEC_FILE = "https://raw.githubusercontent.com/API-Flows/openapi-workflow-parser/main/src/test/resources/1.0.0/pet-coupons.arazzo.yaml";
 
         OpenAPIWorkflowParserResult result = new OpenAPIWorkflowParser().parse(WORKFLOWS_SPEC_FILE);
 
