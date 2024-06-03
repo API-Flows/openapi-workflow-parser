@@ -1,6 +1,7 @@
 package com.apiflows.parser;
 
 import com.apiflows.model.*;
+import org.checkerframework.checker.units.qual.C;
 import org.junit.jupiter.api.Test;
 
 import java.util.*;
@@ -18,7 +19,7 @@ class OpenAPIWorkflowValidatorTest {
 
         assertFalse(result.isValid());
         assertFalse(result.getErrors().isEmpty());
-        assertEquals("'workflowsSpec' is undefined", result.getErrors().get(0));
+        assertEquals("'arazzo' is undefined", result.getErrors().get(0));
     }
 
     @Test
@@ -201,22 +202,33 @@ class OpenAPIWorkflowValidatorTest {
     @Test
     void validateReusableParameter() {
         Parameter parameter = new Parameter()
-                .name("$components.parameters.page")
+                .reference("$components.parameters.pageSize")
                 .value("1");
         String worklowId = "q1";
+
+        Components components = new Components()
+                .parameter("pageSize", parameter);
+
+        validator.loadComponents(components);
 
         assertEquals(0, validator.validateReusableParameter(parameter, worklowId, null).size());
     }
 
     @Test
-    void validateReusableParameterWithInAttribute() {
+    void validateReusableParameterNotFound() {
         Parameter parameter = new Parameter()
-                .name("$components.parameters.page")
-                .value("1")
-                .in("query");
+                .reference("$components.parameters.pageSize")
+                .value("1");
+        Parameter anotherParameter = new Parameter()
+                .reference("$components.parameters.pageCounter")
+                .value("1");
         String worklowId = "q1";
 
-        // error: must not define IN attribute
+        Components components = new Components()
+                .parameter("anotherParameter", anotherParameter);
+
+        validator.loadComponents(components);
+
         assertEquals(1, validator.validateReusableParameter(parameter, worklowId, null).size());
     }
 
@@ -570,14 +582,14 @@ class OpenAPIWorkflowValidatorTest {
                         .type("openapi"),
                 new SourceDescription()
                         .name("workflowspec-1")
-                        .type("workflowsSpec")
+                        .type("arazzo")
         );
 
         assertEquals(2, new OpenAPIWorkflowValidator().getNumOpenApiSourceDescriptions(sourceDescriptions));
     }
 
     @Test
-    public void getNumWorkflowsSpecSourceDescriptions() {
+    public void getNumArazzoTypeSourceDescriptions() {
         List<SourceDescription> sourceDescriptions = List.of(
                 new SourceDescription()
                         .name("openapifile-1")
@@ -587,10 +599,10 @@ class OpenAPIWorkflowValidatorTest {
                         .type("openapi"),
                 new SourceDescription()
                         .name("workflowspec-1")
-                        .type("workflowsSpec")
+                        .type("arazzo")
         );
 
-        assertEquals(1, new OpenAPIWorkflowValidator().getNumWorkflowsSpecSourceDescriptions(sourceDescriptions));
+        assertEquals(1, new OpenAPIWorkflowValidator().getNumArazzoTypeSourceDescriptions(sourceDescriptions));
     }
 
     @Test
@@ -621,7 +633,7 @@ class OpenAPIWorkflowValidatorTest {
 
     @Test
     public void validateStepsWorkflowIds() {
-        boolean multipleWorkflowsSpecFiles = true;
+        boolean multipleArazzoTypeFiles = true;
 
         List<Step> steps = List.of(
                 new Step()
@@ -629,12 +641,12 @@ class OpenAPIWorkflowValidatorTest {
                         .workflowId("w2")
         );
 
-        assertEquals(1, new OpenAPIWorkflowValidator().validateStepsWorkflowIds(steps, multipleWorkflowsSpecFiles).size());
+        assertEquals(1, new OpenAPIWorkflowValidator().validateStepsWorkflowIds(steps, multipleArazzoTypeFiles).size());
     }
 
     @Test
     public void validateStepsWorkflowIdsWithoutRuntimeExpression() {
-        boolean multipleWorkflowsSpecFiles = false;
+        boolean multipleArazzoTypeFiles = false;
 
         List<Step> steps = List.of(
                 new Step()
@@ -642,7 +654,7 @@ class OpenAPIWorkflowValidatorTest {
                         .workflowId("w2")
         );
 
-        assertEquals(0, new OpenAPIWorkflowValidator().validateStepsWorkflowIds(steps, multipleWorkflowsSpecFiles).size());
+        assertEquals(0, new OpenAPIWorkflowValidator().validateStepsWorkflowIds(steps, multipleArazzoTypeFiles).size());
     }
 
     @Test

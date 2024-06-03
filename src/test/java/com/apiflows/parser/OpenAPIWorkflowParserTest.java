@@ -86,7 +86,7 @@ class OpenAPIWorkflowParserTest {
     @Test
     public void getJsonFormat() {
         final String CONTENT = "{" +
-                "\"workflowsSpec\" : \"1.0.0\"" +
+                "\"arazzo\" : \"1.0.0\"" +
                 "}";
 
         OpenAPIWorkflowParserResult.Format format = parser.getFormat(CONTENT);
@@ -96,7 +96,7 @@ class OpenAPIWorkflowParserTest {
     @Test
     public void getYamlFormat() {
         final String CONTENT = "" +
-                "workflowsSpec : 1.0.0" +
+                "arazzo : 1.0.0" +
                 "info:" +
                 "  title: simple\n";
 
