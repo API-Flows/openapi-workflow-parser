@@ -39,8 +39,8 @@ public class SourceDescription {
         return "openapi".equals(this.type);
     }
 
-    public boolean isWorkflowsSpec() {
-        return "workflowsSpec".equals(this.type);
+    public boolean isArazzo() {
+        return "arazzo".equals(this.type);
     }
 
     public SourceDescription name(String name) {

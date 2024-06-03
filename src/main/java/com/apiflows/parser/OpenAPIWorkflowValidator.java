@@ -13,7 +13,8 @@ public class OpenAPIWorkflowValidator {
     Set<String> workflowIds = new HashSet<>();
     Map<String, Set<String>> stepIds = new HashMap<>();
     Set<String> operationIds = new HashSet<>();
-    Set<Schema> components = new HashSet<>();
+    Set<String> componentIds = new HashSet<>();
+    Components components = null;
 
     OpenAPIWorkflowValidator() {
     }
@@ -31,11 +32,12 @@ public class OpenAPIWorkflowValidator {
         loadWorkflowIds(this.openAPIWorkflow);
         loadStepIds(this.openAPIWorkflow.getWorkflows());
         loadOperationIds(this.openAPIWorkflow);
+        loadComponents(this.openAPIWorkflow.getComponents());
 
         OpenAPIWorkflowValidatorResult result = new OpenAPIWorkflowValidatorResult();
         
         if (openAPIWorkflow.getArazzo() == null || openAPIWorkflow.getArazzo().isEmpty()) {
-            result.addError("'workflowsSpec' is undefined");
+            result.addError("'arazzo' is undefined");
         }
 
         // Info
@@ -85,7 +87,7 @@ public class OpenAPIWorkflowValidator {
     }
 
     List<String> validateSourceDescriptions(List<SourceDescription> sourceDescriptions) {
-        List<String> SUPPORTED_TYPES = Arrays.asList("openapi", "workflowsSpec");
+        List<String> SUPPORTED_TYPES = Arrays.asList("openapi", "arazzo");
 
         List<String> errors = new ArrayList<>();
 
@@ -171,15 +173,18 @@ public class OpenAPIWorkflowValidator {
 
         if(step.getParameters() != null) {
             for(Parameter parameter : step.getParameters()) {
-                if(isRuntimeExpression(parameter.getName())) {
+                if(isRuntimeExpression(parameter.getReference())) {
+                    // reference a reusable object
                     errors.addAll(validateReusableParameter(parameter, workflowId, null));
                 } else {
+                    // parameter
                     errors.addAll(validateParameter(parameter, workflowId, null));
-                }
-                if(step.getWorkflowId() == null) {
-                    // when the step in context is NOT a workflowId the parameter IN must be defined
-                    if(!isRuntimeExpression(parameter.getName()) && parameter.getIn() == null) {
-                        errors.add("'Workflow[" + workflowId + "]' parameter IN must be defined");
+
+                    if(step.getWorkflowId() == null) {
+                        // when the step in context is NOT a workflowId the parameter IN must be defined
+                        if(!isRuntimeExpression(parameter.getName()) && parameter.getIn() == null) {
+                            errors.add("'Workflow[" + workflowId + "]' parameter IN must be defined");
+                        }
                     }
                 }
             }
@@ -212,7 +217,7 @@ public class OpenAPIWorkflowValidator {
     }
 
     List<String> validateParameter(Parameter parameter, String workflowId, String componentName) {
-        List<String> SUPPORTED_VALUES = Arrays.asList("path", "query", "header", "cookie", "body", "workflow");
+        List<String> SUPPORTED_VALUES = Arrays.asList("path", "query", "header", "cookie", "body");
 
         String source;
 
@@ -264,19 +269,18 @@ public class OpenAPIWorkflowValidator {
             source = "Component[" + componentName + "]";
         }
 
+        // reference to reusable object
+        String reference = parameter.getReference();
+        // normalize reference
+        String key = reference.replace("$components.parameters.", "");
+
         List<String> errors = new ArrayList<>();
 
-        if(isRuntimeExpression(parameter.getName())) {
-            // Reusable Parameter object
-            String name = parameter.getName();
-
-            if(parameter.getIn() != null) {
-                errors.add(source +  "parameter " + name + " in (" + parameter.getIn() + ") should not be provided for a Reusable Parameter Object");
-            }
-
-            // TODO: check reusable parameter exists in Components
-
+        // check reusable parameter exists in Components
+        if(!this.components.getParameters().containsKey(key)) {
+            errors.add(source + " parameter '" + reference + "' not found");
         }
+
         return errors;
     }
 
@@ -447,14 +451,13 @@ public class OpenAPIWorkflowValidator {
     List<String> loadWorkflowIds(OpenAPIWorkflow openAPIWorkflow) {
         List<String> errors = new ArrayList<>();
 
-        boolean multipleWorkflowsSpec = getNumWorkflowsSpecSourceDescriptions(openAPIWorkflow.getSourceDescriptions()) > 1 ? true : false;
-
+        boolean multipleSpecs = getNumArazzoTypeSourceDescriptions(openAPIWorkflow.getSourceDescriptions()) > 1 ? true : false;
 
         if(openAPIWorkflow.getWorkflows() != null) {
             validateWorkflowIdsUniqueness(openAPIWorkflow.getWorkflows());
 
             for (Workflow workflow : openAPIWorkflow.getWorkflows()) {
-                errors.addAll(validateStepsWorkflowIds(workflow.getSteps(), multipleWorkflowsSpec));
+                errors.addAll(validateStepsWorkflowIds(workflow.getSteps(), multipleSpecs));
             }
 
             for (Workflow workflow : openAPIWorkflow.getWorkflows()) {
@@ -508,6 +511,10 @@ public class OpenAPIWorkflowValidator {
         return errors;
     }
 
+    void loadComponents(Components components) {
+        this.components = components;
+    }
+
     public List<String> validateStepsOperationIds(List<Step> steps, boolean multipleOpenApiFiles) {
         List<String> errors = new ArrayList<>();
 
@@ -528,9 +535,9 @@ public class OpenAPIWorkflowValidator {
         return (int) sourceDescriptions.stream().filter(p -> p.isOpenApi()).count();
     }
 
-    // num of SourceDescriptions with type 'workflowsSpec'
-    int getNumWorkflowsSpecSourceDescriptions(List<SourceDescription> sourceDescriptions) {
-        return (int) sourceDescriptions.stream().filter(p -> p.isWorkflowsSpec()).count();
+    // num of SourceDescriptions with type 'arazzo'
+    int getNumArazzoTypeSourceDescriptions(List<SourceDescription> sourceDescriptions) {
+        return (int) sourceDescriptions.stream().filter(p -> p.isArazzo()).count();
     }
 
     boolean stepExists(String workflowId, String stepId) {
@@ -554,11 +561,11 @@ public class OpenAPIWorkflowValidator {
         return errors;
     }
 
-    List<String> validateStepsWorkflowIds(List<Step> steps, boolean multipleWorkflowsSpecFiles) {
+    List<String> validateStepsWorkflowIds(List<Step> steps, boolean multipleArazzoTypeFiles) {
         List<String> errors = new ArrayList<>();
 
         for(Step step : steps) {
-            if(multipleWorkflowsSpecFiles) {
+            if(multipleArazzoTypeFiles) {
                 // must use runtime expression to map applicable SourceDescription
                 if(step.getWorkflowId() != null && !step.getWorkflowId().startsWith("$sourceDescriptions.")) {
                     errors.add("Operation " + step.getWorkflowId() + " must be specified using a runtime expression (e.g., $sourceDescriptions.<name>.<workflowId>)");
