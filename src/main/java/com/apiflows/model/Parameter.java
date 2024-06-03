@@ -7,7 +7,7 @@ public class Parameter {
     private String name;
     private String in;
     private String value;
-    private String style;
+    private String reference;
 
     @JsonProperty("name")
     public String getName() {
@@ -36,12 +36,13 @@ public class Parameter {
         this.value = value;
     }
 
-    public String getStyle() {
-        return style;
+    @JsonProperty("reference")
+    public String getReference() {
+        return reference;
     }
 
-    public void setStyle(String style) {
-        this.style = style;
+    public void setReference(String reference) {
+        this.reference = reference;
     }
 
     public Parameter name(String name) {
@@ -59,8 +60,8 @@ public class Parameter {
         return this;
     }
 
-    public Parameter style(String style) {
-        this.style = style;
+    public Parameter reference(String reference) {
+        this.reference = reference;
         return this;
     }
 

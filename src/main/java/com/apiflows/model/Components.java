@@ -10,6 +10,8 @@ public class Components {
 
     private Map<String, Schema> inputs = new HashMap<>();
     private Map<String, Parameter> parameters = new HashMap<>();
+    private Map<String, SuccessAction> successActions = new HashMap<>();
+    private Map<String, FailureAction> failureActions = new HashMap<>();
 
     // Getters and setters
 
@@ -39,5 +41,27 @@ public class Components {
         this.inputs.put(key, input);
     }
 
+    @JsonProperty("successActions")
+    public Map<String, SuccessAction> getSuccessActions() {
+        return successActions;
+    }
+
+    public void setSuccessActions(Map<String, SuccessAction> successActions) {
+        this.successActions = successActions;
+    }
+
+    @JsonProperty("failureActions")
+    public Map<String, FailureAction> getFailureActions() {
+        return failureActions;
+    }
+
+    public void setFailureActions(Map<String, FailureAction> failureActions) {
+        this.failureActions = failureActions;
+    }
+
+    public Components parameter(String key, Parameter parameter) {
+        this.addParameter(key, parameter);
+        return this;
+    }
 }
 
