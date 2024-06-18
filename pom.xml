@@ -6,7 +6,7 @@
 
     <groupId>com.api-flows</groupId>
     <artifactId>openapi-workflow-parser</artifactId>
-    <version>0.0.3-SNAPSHOT</version>
+    <version>0.0.4-SNAPSHOT</version>
 
     <url>https://github.com/api-flows/openapi-workflow-parser</url>
 
@@ -199,11 +199,11 @@
                 </configuration>
             </plugin>
 
-<!-- Uncomment to release version to Maven Central -->
+            <!-- Uncomment to release version to Maven Central -->
 <!--            <plugin>-->
 <!--                <groupId>org.sonatype.central</groupId>-->
 <!--                <artifactId>central-publishing-maven-plugin</artifactId>-->
-<!--                <version>0.4.0</version>-->
+<!--                <version>0.5.0</version>-->
 <!--                <extensions>true</extensions>-->
 <!--                <configuration>-->
 <!--                    <publishingServerId>central</publishingServerId>-->
