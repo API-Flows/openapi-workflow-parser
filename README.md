@@ -28,7 +28,7 @@ You can include this library from Maven central:
   <dependency>
     <groupId>com-api-flows</groupId>
     <artifactId>openapi-workflow-parser</artifactId>
-    <version>0.0.2</version>
+    <version>0.0.3</version>
   </dependency>
 ```
 
@@ -81,6 +81,6 @@ Add the SNAPSHOT dependency ([check latest](pom.xml) available) in your POM file
     <dependency>
       <groupId>com.api-flows</groupId>
       <artifactId>openapi-workflow-parser</artifactId>
-      <version>0.0.3-SNAPSHOT</version>
+      <version>0.0.4-SNAPSHOT</version>
     </dependency>
 ```
