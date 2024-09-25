@@ -31,13 +31,15 @@ public class OperationBinder {
         List<Operation> operations = new ArrayList<>();
 
         for(SourceDescription source : openAPIWorkflow.getSourceDescriptions()) {
-            if(new HttpUtil().isUrl(source.getUrl())) {
-                // absolute url
-                operations.addAll(getOperations(source.getUrl()));
-            } else {
-                // relative path
-                String filename = getRootFolder(location) + source.getUrl();
-                operations.addAll(getOperations(filename));
+            if(source.isOpenApi()) {
+                if (new HttpUtil().isUrl(source.getUrl())) {
+                    // absolute url
+                    operations.addAll(getOperations(source.getUrl()));
+                } else {
+                    // relative path
+                    String filename = getRootFolder(location) + source.getUrl();
+                    operations.addAll(getOperations(filename));
+                }
             }
         }
 
@@ -45,8 +47,8 @@ public class OperationBinder {
             for(Step step : workflow.getSteps()) {
                 if(step.getOperationId() != null) {
                     step.setOperation(findOperationById(step.getOperationId(), operations));
-                } else if(step.getOperationRef() != null) {
-                    step.setOperation(findOperationByRef(step.getOperationRef(), operations));
+                } else if(step.getOperationPath() != null) {
+                    step.setOperation(findOperationByRef(step.getOperationPath(), operations));
                 }
             }
         }
