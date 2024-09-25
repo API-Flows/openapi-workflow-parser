@@ -161,13 +161,13 @@ public class OpenAPIWorkflowValidator {
 
         int numAssignedValues = (step.getOperationId() != null ? 1 : 0) +
                 (step.getWorkflowId() != null ? 1 : 0) +
-                (step.getOperationRef() != null ? 1 : 0);
+                (step.getOperationPath() != null ? 1 : 0);
 
         if (numAssignedValues != 1) {
             if(stepId != null) {
-                errors.add("'Step " + stepId + " should provide only one of the following: [operationId, operationRef, workflowId]");
+                errors.add("'Step " + stepId + " should provide only one of the following: [operationId, operationPath, workflowId]");
             } else {
-                errors.add("'Workflow[" + workflowId + "]' should provide only one of the following: [operationId, operationRef, workflowId]");
+                errors.add("'Workflow[" + workflowId + "]' should provide only one of the following: [operationId, operationPath, workflowId]");
             }
         }
 
@@ -370,7 +370,7 @@ public class OpenAPIWorkflowValidator {
     }
 
     List<String> validateCriterion(Criterion criterion, String stepId) {
-        List<String> SUPPORTED_VALUES = Arrays.asList("simple", "regex", "JSONPath");
+        List<String> SUPPORTED_VALUES = Arrays.asList("simple", "regex", "jsonpath", "xpath");
 
         List<String> errors = new ArrayList<>();
 
