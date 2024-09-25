@@ -106,7 +106,7 @@ class OpenAPIWorkflowValidatorTest {
                 .description("First step in the workflow")
                 .operationId(null)
                 .workflowId(null)
-                .operationRef(null);
+                .operationPath(null);
         String worklowId = "q1";
 
         assertEquals(1, validator.validateStep(step, worklowId).size());

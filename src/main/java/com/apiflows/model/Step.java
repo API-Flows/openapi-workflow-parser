@@ -12,7 +12,7 @@ public class Step {
 
     private String stepId;
     private String operationId;
-    private String operationRef;
+    private String operationPath;
     private Operation operation;
     private String workflowId;
     private Workflow workflow;
@@ -42,12 +42,12 @@ public class Step {
         this.operationId = operationId;
     }
 
-    public String getOperationRef() {
-        return operationRef;
+    public String getOperationPath() {
+        return operationPath;
     }
 
-    public void setOperationRef(String operationRef) {
-        this.operationRef = operationRef;
+    public void setOperationPath(String operationPath) {
+        this.operationPath = operationPath;
     }
 
     public Operation getOperation() {
@@ -147,8 +147,8 @@ public class Step {
         return this;
     }
 
-    public Step operationRef(String operationRef) {
-        this.setOperationRef(operationRef);
+    public Step operationPath(String operationPath) {
+        this.setOperationPath(operationPath);
         return this;
     }
 
