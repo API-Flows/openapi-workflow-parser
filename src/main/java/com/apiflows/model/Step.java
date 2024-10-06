@@ -10,15 +10,17 @@ import java.util.Map;
 
 public class Step {
 
+    private String description;
     private String stepId;
     private String operationId;
     private String operationPath;
     private Operation operation;
     private String workflowId;
     private Workflow workflow;
-    private String description;
-    private String dependsOn;
     private List<Parameter> parameters = new ArrayList<>();
+
+    private RequestBody requestBody;
+    private String dependsOn;
     private List<Criterion> successCriteria = new ArrayList<>();
     private Map<String, String> outputs = new HashMap<>();
     private List<SuccessAction> onSuccess = new ArrayList<>();
@@ -179,6 +181,19 @@ public class Step {
 
     public Step parameters(List<Parameter> parameters) {
         this.setParameters(parameters);
+        return this;
+    }
+
+    public RequestBody getRequestBody() {
+        return requestBody;
+    }
+
+    public void setRequestBody(RequestBody requestBody) {
+        this.requestBody = requestBody;
+    }
+
+    public Step requestBody(RequestBody requestBody) {
+        this.requestBody = requestBody;
         return this;
     }
 

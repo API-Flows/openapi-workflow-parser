@@ -14,6 +14,13 @@ public class Workflow {
     private String summary;
     private String description;
     private Schema inputs;
+
+    private String dependsOn;
+
+    private List<Parameter> parameters = new ArrayList<>();
+    private List<SuccessAction> successActions = new ArrayList<>();
+    private List<FailureAction> failureActions = new ArrayList<>();
+
     private List<Step> steps = new ArrayList<>();
     private Map<String, String> outputs = new HashMap<>();
 
@@ -95,4 +102,35 @@ public class Workflow {
         return this;
     }
 
+    public String getDependsOn() {
+        return dependsOn;
+    }
+
+    public void setDependsOn(String dependsOn) {
+        this.dependsOn = dependsOn;
+    }
+
+    public List<Parameter> getParameters() {
+        return parameters;
+    }
+
+    public void setParameters(List<Parameter> parameters) {
+        this.parameters = parameters;
+    }
+
+    public List<SuccessAction> getSuccessActions() {
+        return successActions;
+    }
+
+    public void setSuccessActions(List<SuccessAction> successActions) {
+        this.successActions = successActions;
+    }
+
+    public List<FailureAction> getFailureActions() {
+        return failureActions;
+    }
+
+    public void setFailureActions(List<FailureAction> failureActions) {
+        this.failureActions = failureActions;
+    }
 }
