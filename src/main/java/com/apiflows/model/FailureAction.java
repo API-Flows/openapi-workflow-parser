@@ -1,7 +1,5 @@
 package com.apiflows.model;
 
-import io.swagger.v3.oas.models.media.IntegerSchema;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,7 +8,7 @@ public class FailureAction {
     private String type;
     private String workflowId;
     private String stepId;
-    private Long retryAfter;
+    private Double retryAfter;
     private Integer retryLimit;
     private List<Criterion> criteria;
 
@@ -38,11 +36,11 @@ public class FailureAction {
         this.stepId = stepId;
     }
 
-    public Long getRetryAfter() {
+    public Double getRetryAfter() {
         return retryAfter;
     }
 
-    public void setRetryAfter(Long retryAfter) {
+    public void setRetryAfter(Double retryAfter) {
         this.retryAfter = retryAfter;
     }
 
@@ -77,7 +75,7 @@ public class FailureAction {
         return this;
     }
 
-    public FailureAction retryAfter(Long retryAfter) {
+    public FailureAction retryAfter(Double retryAfter) {
         this.retryAfter = retryAfter;
         return this;
     }

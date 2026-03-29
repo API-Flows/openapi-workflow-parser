@@ -2,6 +2,7 @@ package com.apiflows.parser;
 
 import com.apiflows.model.OpenAPIWorkflow;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class OpenAPIWorkflowParserResult {
@@ -10,7 +11,7 @@ public class OpenAPIWorkflowParserResult {
         JSON, YAML
     }
     private boolean valid = true;
-    private List<String> errors = null;
+    private List<String> errors = new ArrayList<>();
     private OpenAPIWorkflow openAPIWorkflow;
 
     private String location;
