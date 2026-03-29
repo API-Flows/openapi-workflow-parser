@@ -5,10 +5,19 @@ import java.util.List;
 
 public class SuccessAction {
 
+    private String name;
     private String type;
     private String workflowId;
     private String stepId;
     private List<Criterion> criteria;
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
 
     public String getType() {
         return type;
@@ -47,6 +56,11 @@ public class SuccessAction {
             this.criteria = new ArrayList<>();
         }
         this.criteria.add(criterion);
+    }
+
+    public SuccessAction name(String name) {
+        this.name = name;
+        return this;
     }
 
     public SuccessAction type(String type) {

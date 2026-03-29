@@ -6,7 +6,7 @@ public class Parameter {
 
     private String name;
     private String in;
-    private String value;
+    private Object value;
     private String reference;
 
     @JsonProperty("name")
@@ -28,11 +28,11 @@ public class Parameter {
     }
 
     @JsonProperty("value")
-    public String getValue() {
+    public Object getValue() {
         return value;
     }
 
-    public void setValue(String value) {
+    public void setValue(Object value) {
         this.value = value;
     }
 
@@ -55,7 +55,7 @@ public class Parameter {
         return this;
     }
 
-    public Parameter value(String value) {
+    public Parameter value(Object value) {
         this.value = value;
         return this;
     }

@@ -5,12 +5,21 @@ import java.util.List;
 
 public class FailureAction {
 
+    private String name;
     private String type;
     private String workflowId;
     private String stepId;
     private Double retryAfter;
     private Integer retryLimit;
     private List<Criterion> criteria;
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
 
     public String getType() {
         return type;
@@ -58,6 +67,11 @@ public class FailureAction {
 
     public void setCriteria(List<Criterion> criteria) {
         this.criteria = criteria;
+    }
+
+    public FailureAction name(String name) {
+        this.name = name;
+        return this;
     }
 
     public FailureAction type(String type) {
