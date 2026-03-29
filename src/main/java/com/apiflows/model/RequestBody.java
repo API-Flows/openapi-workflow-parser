@@ -1,10 +1,12 @@
 package com.apiflows.model;
 
+import java.util.List;
+
 public class RequestBody {
 
     private String contentType;
     private Object payload;
-    private PayoadReplacement payoadReplacement;
+    private List<PayloadReplacement> replacements;
 
     public String getContentType() {
         return contentType;
@@ -22,11 +24,11 @@ public class RequestBody {
         this.payload = payload;
     }
 
-    public PayoadReplacement getPayoadReplacement() {
-        return payoadReplacement;
+    public List<PayloadReplacement> getReplacements() {
+        return replacements;
     }
 
-    public void setPayoadReplacement(PayoadReplacement payoadReplacement) {
-        this.payoadReplacement = payoadReplacement;
+    public void setReplacements(List<PayloadReplacement> replacements) {
+        this.replacements = replacements;
     }
 }

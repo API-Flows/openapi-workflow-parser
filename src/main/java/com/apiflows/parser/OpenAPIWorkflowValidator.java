@@ -217,7 +217,7 @@ public class OpenAPIWorkflowValidator {
     }
 
     List<String> validateParameter(Parameter parameter, String workflowId, String componentName) {
-        List<String> SUPPORTED_VALUES = Arrays.asList("path", "query", "header", "cookie", "body");
+        List<String> SUPPORTED_VALUES = Arrays.asList("path", "query", "header", "cookie");
 
         String source;
 
@@ -299,25 +299,17 @@ public class OpenAPIWorkflowValidator {
             }
         }
 
-        if(successAction.getWorkflowId() == null && successAction.getStepId() == null) {
-            errors.add("Step " + stepId + " SuccessAction must define either workflowId or stepId");
-        }
-
-        if(successAction.getWorkflowId() != null && successAction.getStepId() != null) {
-            errors.add("Step " + stepId + " SuccessAction cannot define both workflowId and stepId");
-        }
-
-        if(successAction.getStepId() != null && successAction.getType() != null && successAction.getType().equals("goto")) {
-            // when type `goto` stepId must exist (if provided)
-            if (!stepExists(workflowId, successAction.getStepId())) {
-                errors.add("Step " + stepId + " SuccessAction stepId is invalid (no such a step exists)");
+        if("goto".equals(successAction.getType())) {
+            errors.addAll(validateGotoTarget(stepId, "SuccessAction", successAction.getStepId(), successAction.getWorkflowId()));
+            if(successAction.getStepId() != null) {
+                if (!stepExists(workflowId, successAction.getStepId())) {
+                    errors.add("Step " + stepId + " SuccessAction stepId is invalid (no such a step exists)");
+                }
             }
-        }
-
-        if(successAction.getWorkflowId() != null && successAction.getType() != null && successAction.getType().equals("goto")) {
-            // when type `goto` workflowId must exist (if provided)
-            if(!workflowExists(workflowId)) {
-                errors.add("Step " + stepId + " SuccessAction workflowId is invalid (no such a workflow exists)");
+            if(successAction.getWorkflowId() != null) {
+                if(!workflowExists(successAction.getWorkflowId())) {
+                    errors.add("Step " + stepId + " SuccessAction workflowId is invalid (no such a workflow exists)");
+                }
             }
         }
 
@@ -339,12 +331,8 @@ public class OpenAPIWorkflowValidator {
             }
         }
 
-        if(failureAction.getWorkflowId() == null && failureAction.getStepId() == null) {
-            errors.add("Step " + stepId + " FailureAction must define either workflowId or stepId");
-        }
-
-        if(failureAction.getWorkflowId() != null && failureAction.getStepId() != null) {
-            errors.add("Step " + stepId + " FailureAction cannot define both workflowId and stepId");
+        if("goto".equals(failureAction.getType())) {
+            errors.addAll(validateGotoTarget(stepId, "FailureAction", failureAction.getStepId(), failureAction.getWorkflowId()));
         }
 
         if(failureAction.getRetryAfter() != null && failureAction.getRetryAfter() < 0) {
@@ -434,7 +422,7 @@ public class OpenAPIWorkflowValidator {
     }
 
     String getWorkflowIdRegularExpression() {
-        return "[A-Za-z0-9_\\\\-]++";
+        return "[A-Za-z0-9_\\-]+";
     }
     String getComponentKeyRegularExpression() {
         return "^[a-zA-Z0-9\\.\\-_]+$";
@@ -593,6 +581,17 @@ public class OpenAPIWorkflowValidator {
 
     boolean isRuntimeExpression(String name) {
         return name != null && name.startsWith("$");
+    }
+
+    private List<String> validateGotoTarget(String stepId, String actionLabel, String targetStepId, String targetWorkflowId) {
+        List<String> errors = new ArrayList<>();
+        if (targetWorkflowId == null && targetStepId == null) {
+            errors.add("Step " + stepId + " " + actionLabel + " must define either workflowId or stepId");
+        }
+        if (targetWorkflowId != null && targetStepId != null) {
+            errors.add("Step " + stepId + " " + actionLabel + " cannot define both workflowId and stepId");
+        }
+        return errors;
     }
 
 }
