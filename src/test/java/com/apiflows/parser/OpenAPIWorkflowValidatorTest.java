@@ -54,7 +54,7 @@ class OpenAPIWorkflowValidatorTest {
     void validateSourceDescriptionsWithoutUrl() {
         List<SourceDescription> sourceDescriptions = new ArrayList<>();
         sourceDescriptions.add(new SourceDescription()
-                .name("Source one")
+                .name("source-one")
                 .type("openapi")
                 .url(null));
         assertEquals(1, validator.validateSourceDescriptions(sourceDescriptions).size());
@@ -64,7 +64,7 @@ class OpenAPIWorkflowValidatorTest {
     void validateSourceDescriptionsInvalidType() {
         List<SourceDescription> sourceDescriptions = new ArrayList<>();
         sourceDescriptions.add(new SourceDescription()
-                .name("Source one")
+                .name("source-one")
                 .type("unkwown")
                 .url("https://example.com/spec.json"));
         assertEquals(1, validator.validateSourceDescriptions(sourceDescriptions).size());
@@ -295,6 +295,7 @@ class OpenAPIWorkflowValidatorTest {
         String stepId = "step-one";
 
         SuccessAction successAction = new SuccessAction()
+                .name("on-success")
                 .type("end");
 
         successAction.addCriteria(
@@ -310,6 +311,7 @@ class OpenAPIWorkflowValidatorTest {
         String stepId = "step-one";
 
         SuccessAction successAction = new SuccessAction()
+                .name("on-success")
                 .type("end")
                 .stepId(null)
                 .workflowId(null);
@@ -323,6 +325,7 @@ class OpenAPIWorkflowValidatorTest {
         String stepId = "step-one";
 
         SuccessAction successAction = new SuccessAction()
+                .name("on-success")
                 .type("invalid-type")
                 .stepId("step-one");
 
@@ -339,6 +342,7 @@ class OpenAPIWorkflowValidatorTest {
         String stepId = "step-one";
 
         SuccessAction successAction = new SuccessAction()
+                .name("on-success")
                 .type("goto")
                 .stepId(null)
                 .workflowId(null);
@@ -352,6 +356,7 @@ class OpenAPIWorkflowValidatorTest {
         v.workflowIds.add("target-workflow");
 
         SuccessAction successAction = new SuccessAction()
+                .name("on-success")
                 .type("goto")
                 .stepId("step-one")
                 .workflowId("target-workflow");
@@ -364,6 +369,7 @@ class OpenAPIWorkflowValidatorTest {
         OpenAPIWorkflowValidator v = validatorWithWorkflowIds("target-workflow");
 
         SuccessAction successAction = new SuccessAction()
+                .name("on-success")
                 .type("goto")
                 .workflowId("target-workflow");
 
@@ -375,6 +381,7 @@ class OpenAPIWorkflowValidatorTest {
         OpenAPIWorkflowValidator v = validatorWithWorkflowIds("w1");
 
         SuccessAction successAction = new SuccessAction()
+                .name("on-success")
                 .type("goto")
                 .workflowId("non-existent-workflow");
 
@@ -386,6 +393,7 @@ class OpenAPIWorkflowValidatorTest {
         OpenAPIWorkflowValidator v = validatorWithStepIds("w1", "step-one", "step-two", "step-three");
 
         SuccessAction successAction = new SuccessAction()
+                .name("on-success")
                 .type("goto")
                 .stepId("step-dummy");
 
@@ -444,6 +452,7 @@ class OpenAPIWorkflowValidatorTest {
         String stepId = "step-one";
 
         FailureAction failureAction = new FailureAction()
+                .name("on-failure")
                 .type("end")
                 .retryAfter(1.5)
                 .retryLimit(3);
@@ -461,6 +470,7 @@ class OpenAPIWorkflowValidatorTest {
         String stepId = "step-one";
 
         FailureAction failureAction = new FailureAction()
+                .name("on-failure")
                 .type("dummy")
                 .retryAfter(1.5)
                 .retryLimit(3);
@@ -478,6 +488,7 @@ class OpenAPIWorkflowValidatorTest {
         String stepId = "step-one";
 
         FailureAction failureAction = new FailureAction()
+                .name("on-failure")
                 .type("end")
                 .retryAfter(-1.5)
                 .retryLimit(-3);
@@ -495,6 +506,7 @@ class OpenAPIWorkflowValidatorTest {
         String stepId = "step-one";
 
         FailureAction failureAction = new FailureAction()
+                .name("on-failure")
                 .type("retry")
                 .stepId(null)
                 .workflowId(null)
@@ -510,6 +522,7 @@ class OpenAPIWorkflowValidatorTest {
         String stepId = "step-one";
 
         FailureAction failureAction = new FailureAction()
+                .name("on-failure")
                 .type("goto")
                 .stepId(null)
                 .workflowId(null);
@@ -522,6 +535,7 @@ class OpenAPIWorkflowValidatorTest {
         OpenAPIWorkflowValidator v = validatorWithStepIds("w1", "step-one", "step-two");
 
         FailureAction failureAction = new FailureAction()
+                .name("on-failure")
                 .type("goto")
                 .stepId("step-one")
                 .workflowId("workflow-test");
@@ -535,6 +549,7 @@ class OpenAPIWorkflowValidatorTest {
         String stepId = "step-one";
 
         FailureAction failureAction = new FailureAction()
+                .name("on-failure")
                 .type("retry")
                 .retryAfter(0.5)
                 .retryLimit(3);
@@ -547,6 +562,7 @@ class OpenAPIWorkflowValidatorTest {
         OpenAPIWorkflowValidator v = validatorWithStepIds("w1", "step-one", "step-two", "step-three");
 
         FailureAction failureAction = new FailureAction()
+                .name("on-failure")
                 .type("retry")
                 .stepId("step-dummy")
                 .retryAfter(1.5)
@@ -755,6 +771,194 @@ class OpenAPIWorkflowValidatorTest {
         assertFalse(new OpenAPIWorkflowValidator().isValidComponentKey("pagination order"));
     }
 
+
+    // --- New feature tests ---
+
+    @Test
+    void validateArazzoVersionValid() {
+        assertTrue(new OpenAPIWorkflowValidator().isValidArazzoVersion("1.0.0"));
+    }
+
+    @Test
+    void validateArazzoVersionValidWithPrerelease() {
+        assertTrue(new OpenAPIWorkflowValidator().isValidArazzoVersion("1.0.1-beta"));
+    }
+
+    @Test
+    void validateArazzoVersionInvalid() {
+        assertFalse(new OpenAPIWorkflowValidator().isValidArazzoVersion("2.0.0"));
+    }
+
+    @Test
+    void validateArazzoVersionInvalidFormat() {
+        assertFalse(new OpenAPIWorkflowValidator().isValidArazzoVersion("1.0"));
+    }
+
+    @Test
+    void validateSourceDescriptionNameValid() {
+        assertTrue(new OpenAPIWorkflowValidator().isValidSourceDescriptionName("my-source_1"));
+    }
+
+    @Test
+    void validateSourceDescriptionNameInvalidWithSpace() {
+        assertFalse(new OpenAPIWorkflowValidator().isValidSourceDescriptionName("my source"));
+    }
+
+    @Test
+    void validateSourceDescriptionNameInvalidWithDot() {
+        assertFalse(new OpenAPIWorkflowValidator().isValidSourceDescriptionName("my.source"));
+    }
+
+    @Test
+    void validateSourceDescriptionInvalidName() {
+        List<SourceDescription> sourceDescriptions = new ArrayList<>();
+        sourceDescriptions.add(new SourceDescription()
+                .name("invalid name")
+                .type("openapi")
+                .url("https://example.com/spec.json"));
+        assertEquals(1, validator.validateSourceDescriptions(sourceDescriptions).size());
+    }
+
+    @Test
+    void validateSuccessActionMissingName() {
+        SuccessAction successAction = new SuccessAction()
+                .type("end");
+
+        assertEquals(1, validator.validateSuccessAction("w1", "step-one", successAction).size());
+    }
+
+    @Test
+    void validateFailureActionMissingName() {
+        FailureAction failureAction = new FailureAction()
+                .type("end");
+
+        assertEquals(1, validator.validateFailureAction("w1", "step-one", failureAction).size());
+    }
+
+    @Test
+    void validateWorkflowDependsOnValid() {
+        OpenAPIWorkflowValidator v = new OpenAPIWorkflowValidator();
+        v.workflowIds.add("w1");
+        v.workflowIds.add("w2");
+
+        Workflow workflow = new Workflow()
+                .workflowId("w2")
+                .addStep(new Step().stepId("step-one").operationId("op"));
+        workflow.setDependsOn(List.of("w1"));
+
+        assertEquals(0, v.validateWorkflow(workflow, 0).size());
+    }
+
+    @Test
+    void validateWorkflowDependsOnInvalid() {
+        OpenAPIWorkflowValidator v = new OpenAPIWorkflowValidator();
+        v.workflowIds.add("w1");
+
+        Workflow workflow = new Workflow()
+                .workflowId("w1")
+                .addStep(new Step().stepId("step-one").operationId("op"));
+        workflow.setDependsOn(List.of("non-existent-workflow"));
+
+        assertEquals(1, v.validateWorkflow(workflow, 0).size());
+    }
+
+    @Test
+    void validateCriterionWithExpressionType() {
+        Criterion criterion = new Criterion()
+                .condition("$.petId")
+                .context("$response.body")
+                .expressionType(new CriterionExpressionType()
+                        .type("jsonpath")
+                        .version("draft-goessner-dispatch-jsonpath-00"));
+
+        assertEquals(0, validator.validateCriterion(criterion, "step-one").size());
+    }
+
+    @Test
+    void validateCriterionExpressionTypeMissingVersion() {
+        Criterion criterion = new Criterion()
+                .condition("$.petId")
+                .context("$response.body")
+                .expressionType(new CriterionExpressionType()
+                        .type("jsonpath"));
+
+        assertEquals(1, validator.validateCriterion(criterion, "step-one").size());
+    }
+
+    @Test
+    void validateCriterionExpressionTypeInvalidType() {
+        Criterion criterion = new Criterion()
+                .condition("$.petId")
+                .context("$response.body")
+                .expressionType(new CriterionExpressionType()
+                        .type("simple")
+                        .version("draft-goessner-dispatch-jsonpath-00"));
+
+        assertEquals(1, validator.validateCriterion(criterion, "step-one").size());
+    }
+
+    @Test
+    void validateCriterionExpressionTypeMissingContext() {
+        Criterion criterion = new Criterion()
+                .condition("$.petId")
+                .expressionType(new CriterionExpressionType()
+                        .type("jsonpath")
+                        .version("draft-goessner-dispatch-jsonpath-00"));
+
+        assertEquals(1, validator.validateCriterion(criterion, "step-one").size());
+    }
+
+    @Test
+    void validateComponentsSuccessActions() {
+        Components components = new Components();
+        components.getSuccessActions().put("onSuccess", new SuccessAction().name("onSuccess").type("end"));
+
+        assertEquals(0, validator.validateComponents(components).size());
+    }
+
+    @Test
+    void validateComponentsSuccessActionsInvalidKey() {
+        Components components = new Components();
+        components.getSuccessActions().put("on success", new SuccessAction().name("onSuccess").type("end"));
+
+        assertEquals(1, validator.validateComponents(components).size());
+    }
+
+    @Test
+    void validateComponentsFailureActions() {
+        Components components = new Components();
+        components.getFailureActions().put("onFailure", new FailureAction().name("onFailure").type("end"));
+
+        assertEquals(0, validator.validateComponents(components).size());
+    }
+
+    @Test
+    void validateComponentsFailureActionsInvalidKey() {
+        Components components = new Components();
+        components.getFailureActions().put("on failure", new FailureAction().name("onFailure").type("end"));
+
+        assertEquals(1, validator.validateComponents(components).size());
+    }
+
+    @Test
+    void parameterValueBoolean() {
+        Parameter parameter = new Parameter()
+                .name("flag")
+                .value(true)
+                .in("query");
+
+        assertEquals(0, validator.validateParameter(parameter, "w1", null).size());
+    }
+
+    @Test
+    void parameterValueNumber() {
+        Parameter parameter = new Parameter()
+                .name("page")
+                .value(42)
+                .in("query");
+
+        assertEquals(0, validator.validateParameter(parameter, "w1", null).size());
+    }
 
     @Test
     void isValidJsonPointer() {

@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class Info {
 
     private String title;
+    private String summary;
     private String version;
     private String description;
 
@@ -15,6 +16,15 @@ public class Info {
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    @JsonProperty("summary")
+    public String getSummary() {
+        return summary;
+    }
+
+    public void setSummary(String summary) {
+        this.summary = summary;
     }
 
     @JsonProperty("version")
@@ -37,6 +47,11 @@ public class Info {
 
     public Info title(String title) {
         this.title = title;
+        return this;
+    }
+
+    public Info summary(String summary) {
+        this.summary = summary;
         return this;
     }
 
