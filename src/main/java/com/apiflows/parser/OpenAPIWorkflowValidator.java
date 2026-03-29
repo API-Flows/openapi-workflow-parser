@@ -8,6 +8,8 @@ import java.util.regex.Pattern;
 
 public class OpenAPIWorkflowValidator {
 
+    private static final String STEP_PREFIX = "Step ";
+
     private OpenAPIWorkflow openAPIWorkflow = null;
     Set<String> workflowIds = new HashSet<>();
     Map<String, Set<String>> stepIds = new HashMap<>();
@@ -283,16 +285,16 @@ public class OpenAPIWorkflowValidator {
         List<String> errors = new ArrayList<>();
 
         if (successAction.getName() == null || successAction.getName().isEmpty()) {
-            errors.add("Step " + stepId + " SuccessAction has no name");
+            errors.add(STEP_PREFIX + stepId + " SuccessAction has no name");
         }
 
         if (successAction.getType() == null) {
-            errors.add("Step " + stepId + " SuccessAction has no type");
+            errors.add(STEP_PREFIX + stepId + " SuccessAction has no type");
         }
 
         if (successAction.getType() != null) {
             if (!SUPPORTED_VALUES.contains(successAction.getType())) {
-                errors.add("Step " + stepId + " SuccessAction type (" + successAction.getType() + ") is invalid");
+                errors.add(STEP_PREFIX + stepId + " SuccessAction type (" + successAction.getType() + ") is invalid");
             }
         }
 
@@ -300,12 +302,12 @@ public class OpenAPIWorkflowValidator {
             errors.addAll(validateGotoTarget(stepId, "SuccessAction", successAction.getStepId(), successAction.getWorkflowId()));
             if(successAction.getStepId() != null) {
                 if (!stepExists(workflowId, successAction.getStepId())) {
-                    errors.add("Step " + stepId + " SuccessAction stepId is invalid (no such a step exists)");
+                    errors.add(STEP_PREFIX + stepId + " SuccessAction stepId is invalid (no such a step exists)");
                 }
             }
             if(successAction.getWorkflowId() != null) {
                 if(!workflowExists(successAction.getWorkflowId())) {
-                    errors.add("Step " + stepId + " SuccessAction workflowId is invalid (no such a workflow exists)");
+                    errors.add(STEP_PREFIX + stepId + " SuccessAction workflowId is invalid (no such a workflow exists)");
                 }
             }
         }
@@ -319,16 +321,16 @@ public class OpenAPIWorkflowValidator {
         List<String> errors = new ArrayList<>();
 
         if (failureAction.getName() == null || failureAction.getName().isEmpty()) {
-            errors.add("Step " + stepId + " FailureAction has no name");
+            errors.add(STEP_PREFIX + stepId + " FailureAction has no name");
         }
 
         if (failureAction.getType() == null) {
-            errors.add("Step " + stepId + " FailureAction has no type");
+            errors.add(STEP_PREFIX + stepId + " FailureAction has no type");
         }
 
         if (failureAction.getType() != null) {
             if (!SUPPORTED_VALUES.contains(failureAction.getType())) {
-                errors.add("Step " + stepId + " FailureAction type (" + failureAction.getType() + ") is invalid");
+                errors.add(STEP_PREFIX + stepId + " FailureAction type (" + failureAction.getType() + ") is invalid");
             }
         }
 
@@ -337,12 +339,12 @@ public class OpenAPIWorkflowValidator {
         }
 
         if(failureAction.getRetryAfter() != null && failureAction.getRetryAfter() < 0) {
-            errors.add("Step " + stepId + " FailureAction retryAfter must be non-negative");
+            errors.add(STEP_PREFIX + stepId + " FailureAction retryAfter must be non-negative");
 
         }
 
         if(failureAction.getRetryLimit() != null && failureAction.getRetryLimit() < 0) {
-            errors.add("Step " + stepId + " FailureAction retryLimit must be non-negative");
+            errors.add(STEP_PREFIX + stepId + " FailureAction retryLimit must be non-negative");
 
         }
 
@@ -350,7 +352,7 @@ public class OpenAPIWorkflowValidator {
                 && (failureAction.getType().equals("goto") || failureAction.getType().equals("retry"))) {
             // when type `goto` or `retry` stepId must exist (if provided)
             if (!stepExists(workflowId, failureAction.getStepId())) {
-                errors.add("Step " + stepId + " FailureAction stepId is invalid (no such a step exists)");
+                errors.add(STEP_PREFIX + stepId + " FailureAction stepId is invalid (no such a step exists)");
             }
         }
 
@@ -365,28 +367,28 @@ public class OpenAPIWorkflowValidator {
         List<String> errors = new ArrayList<>();
 
         if(criterion.getCondition() == null) {
-            errors.add("Step " + stepId + " has no condition");
+            errors.add(STEP_PREFIX + stepId + " has no condition");
         }
 
         if (criterion.getType() != null) {
             if (!SUPPORTED_SIMPLE_TYPES.contains(criterion.getType())) {
-                errors.add("Step " + stepId + " SuccessCriteria type (" + criterion.getType() + ") is invalid");
+                errors.add(STEP_PREFIX + stepId + " SuccessCriteria type (" + criterion.getType() + ") is invalid");
             }
             if (criterion.getContext() == null) {
-                errors.add("Step " + stepId + " SuccessCriteria type is specified but context is not provided");
+                errors.add(STEP_PREFIX + stepId + " SuccessCriteria type is specified but context is not provided");
             }
         }
 
         CriterionExpressionType expressionType = criterion.getExpressionType();
         if (expressionType != null) {
             if (expressionType.getType() == null || !SUPPORTED_EXPRESSION_TYPES.contains(expressionType.getType())) {
-                errors.add("Step " + stepId + " SuccessCriteria expressionType '" + expressionType.getType() + "' is invalid (must be jsonpath or xpath)");
+                errors.add(STEP_PREFIX + stepId + " SuccessCriteria expressionType '" + expressionType.getType() + "' is invalid (must be jsonpath or xpath)");
             }
             if (expressionType.getVersion() == null || expressionType.getVersion().isEmpty()) {
-                errors.add("Step " + stepId + " SuccessCriteria expressionType has no version");
+                errors.add(STEP_PREFIX + stepId + " SuccessCriteria expressionType has no version");
             }
             if (criterion.getContext() == null) {
-                errors.add("Step " + stepId + " SuccessCriteria type is specified but context is not provided");
+                errors.add(STEP_PREFIX + stepId + " SuccessCriteria type is specified but context is not provided");
             }
         }
 
@@ -646,10 +648,10 @@ public class OpenAPIWorkflowValidator {
     private List<String> validateGotoTarget(String stepId, String actionLabel, String targetStepId, String targetWorkflowId) {
         List<String> errors = new ArrayList<>();
         if (targetWorkflowId == null && targetStepId == null) {
-            errors.add("Step " + stepId + " " + actionLabel + " must define either workflowId or stepId");
+            errors.add(STEP_PREFIX + stepId + " " + actionLabel + " must define either workflowId or stepId");
         }
         if (targetWorkflowId != null && targetStepId != null) {
-            errors.add("Step " + stepId + " " + actionLabel + " cannot define both workflowId and stepId");
+            errors.add(STEP_PREFIX + stepId + " " + actionLabel + " cannot define both workflowId and stepId");
         }
         return errors;
     }
