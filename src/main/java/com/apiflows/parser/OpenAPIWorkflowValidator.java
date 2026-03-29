@@ -300,12 +300,7 @@ public class OpenAPIWorkflowValidator {
         }
 
         if("goto".equals(successAction.getType())) {
-            if(successAction.getWorkflowId() == null && successAction.getStepId() == null) {
-                errors.add("Step " + stepId + " SuccessAction must define either workflowId or stepId");
-            }
-            if(successAction.getWorkflowId() != null && successAction.getStepId() != null) {
-                errors.add("Step " + stepId + " SuccessAction cannot define both workflowId and stepId");
-            }
+            errors.addAll(validateGotoTarget(stepId, "SuccessAction", successAction.getStepId(), successAction.getWorkflowId()));
             if(successAction.getStepId() != null) {
                 if (!stepExists(workflowId, successAction.getStepId())) {
                     errors.add("Step " + stepId + " SuccessAction stepId is invalid (no such a step exists)");
@@ -337,12 +332,7 @@ public class OpenAPIWorkflowValidator {
         }
 
         if("goto".equals(failureAction.getType())) {
-            if(failureAction.getWorkflowId() == null && failureAction.getStepId() == null) {
-                errors.add("Step " + stepId + " FailureAction must define either workflowId or stepId");
-            }
-            if(failureAction.getWorkflowId() != null && failureAction.getStepId() != null) {
-                errors.add("Step " + stepId + " FailureAction cannot define both workflowId and stepId");
-            }
+            errors.addAll(validateGotoTarget(stepId, "FailureAction", failureAction.getStepId(), failureAction.getWorkflowId()));
         }
 
         if(failureAction.getRetryAfter() != null && failureAction.getRetryAfter() < 0) {
@@ -591,6 +581,17 @@ public class OpenAPIWorkflowValidator {
 
     boolean isRuntimeExpression(String name) {
         return name != null && name.startsWith("$");
+    }
+
+    private List<String> validateGotoTarget(String stepId, String actionLabel, String targetStepId, String targetWorkflowId) {
+        List<String> errors = new ArrayList<>();
+        if (targetWorkflowId == null && targetStepId == null) {
+            errors.add("Step " + stepId + " " + actionLabel + " must define either workflowId or stepId");
+        }
+        if (targetWorkflowId != null && targetStepId != null) {
+            errors.add("Step " + stepId + " " + actionLabel + " cannot define both workflowId and stepId");
+        }
+        return errors;
     }
 
 }

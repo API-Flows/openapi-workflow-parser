@@ -1,7 +1,6 @@
 package com.apiflows.parser;
 
 import com.apiflows.model.*;
-import org.checkerframework.checker.units.qual.C;
 import org.junit.jupiter.api.Test;
 
 import java.util.*;
@@ -11,6 +10,20 @@ import static org.junit.jupiter.api.Assertions.*;
 class OpenAPIWorkflowValidatorTest {
 
     OpenAPIWorkflowValidator validator = new OpenAPIWorkflowValidator();
+
+    private OpenAPIWorkflowValidator validatorWithStepIds(String workflowId, String... steps) {
+        OpenAPIWorkflowValidator v = new OpenAPIWorkflowValidator();
+        Map<String, Set<String>> ids = new HashMap<>();
+        ids.put(workflowId, new HashSet<>(Arrays.asList(steps)));
+        v.stepIds = ids;
+        return v;
+    }
+
+    private OpenAPIWorkflowValidator validatorWithWorkflowIds(String... workflowIds) {
+        OpenAPIWorkflowValidator v = new OpenAPIWorkflowValidator();
+        v.workflowIds.addAll(Arrays.asList(workflowIds));
+        return v;
+    }
 
     @Test
     void validate() {
@@ -335,74 +348,48 @@ class OpenAPIWorkflowValidatorTest {
 
     @Test
     void validateSuccessActionGotoInvalidEntity() {
-        OpenAPIWorkflowValidator validator = new OpenAPIWorkflowValidator();
-        validator.workflowIds.add("target-workflow");
-        Map<String, Set<String>> stepIds = new HashMap<>();
-        stepIds.put("w1", Set.of("step-one", "step-two"));
-        validator.stepIds = stepIds;
-
-        String workflowId = "w1";
-        String stepId = "step-one";
+        OpenAPIWorkflowValidator v = validatorWithStepIds("w1", "step-one", "step-two");
+        v.workflowIds.add("target-workflow");
 
         SuccessAction successAction = new SuccessAction()
                 .type("goto")
                 .stepId("step-one")
                 .workflowId("target-workflow");
 
-        assertEquals(1, validator.validateSuccessAction(workflowId, stepId, successAction).size());
+        assertEquals(1, v.validateSuccessAction("w1", "step-one", successAction).size());
     }
 
     @Test
     void validateSuccessActionGotoValidWorkflowId() {
-        OpenAPIWorkflowValidator validator = new OpenAPIWorkflowValidator();
-        validator.workflowIds.add("target-workflow");
-
-        String workflowId = "w1";
-        String stepId = "step-one";
+        OpenAPIWorkflowValidator v = validatorWithWorkflowIds("target-workflow");
 
         SuccessAction successAction = new SuccessAction()
                 .type("goto")
                 .workflowId("target-workflow");
 
-        assertEquals(0, validator.validateSuccessAction(workflowId, stepId, successAction).size());
+        assertEquals(0, v.validateSuccessAction("w1", "step-one", successAction).size());
     }
 
     @Test
     void validateSuccessActionGotoInvalidWorkflowId() {
-        OpenAPIWorkflowValidator validator = new OpenAPIWorkflowValidator();
-        validator.workflowIds.add("w1");
-
-        String workflowId = "w1";
-        String stepId = "step-one";
+        OpenAPIWorkflowValidator v = validatorWithWorkflowIds("w1");
 
         SuccessAction successAction = new SuccessAction()
                 .type("goto")
                 .workflowId("non-existent-workflow");
 
-        assertEquals(1, validator.validateSuccessAction(workflowId, stepId, successAction).size());
+        assertEquals(1, v.validateSuccessAction("w1", "step-one", successAction).size());
     }
 
     @Test
     void validateSuccessActionInvalidStepId() {
-        String workflowId = "w1";
+        OpenAPIWorkflowValidator v = validatorWithStepIds("w1", "step-one", "step-two", "step-three");
 
-        OpenAPIWorkflowValidator validator = new OpenAPIWorkflowValidator();
-
-        Map<String, Set<String>> stepIds = new HashMap<>();
-        stepIds.put("w1", Set.of("step-one", "step-two", "step-three"));
-
-        validator.stepIds = stepIds;
-
-        String stepId = "step-one";
         SuccessAction successAction = new SuccessAction()
                 .type("goto")
                 .stepId("step-dummy");
 
-        successAction.addCriteria(
-                new Criterion()
-                        .context("$statusCode == 200"));
-
-        assertEquals(1, validator.validateSuccessAction(workflowId, stepId, successAction).size());
+        assertEquals(1, v.validateSuccessAction("w1", "step-one", successAction).size());
     }
 
 
@@ -532,20 +519,14 @@ class OpenAPIWorkflowValidatorTest {
 
     @Test
     void validateFailureActionGotoInvalidEntity() {
-        OpenAPIWorkflowValidator validator = new OpenAPIWorkflowValidator();
-        Map<String, Set<String>> stepIds = new HashMap<>();
-        stepIds.put("w1", Set.of("step-one", "step-two"));
-        validator.stepIds = stepIds;
-
-        String workflowId = "w1";
-        String stepId = "step-one";
+        OpenAPIWorkflowValidator v = validatorWithStepIds("w1", "step-one", "step-two");
 
         FailureAction failureAction = new FailureAction()
                 .type("goto")
                 .stepId("step-one")
                 .workflowId("workflow-test");
 
-        assertEquals(1, validator.validateFailureAction(workflowId, stepId, failureAction).size());
+        assertEquals(1, v.validateFailureAction("w1", "step-one", failureAction).size());
     }
 
     @Test
@@ -563,15 +544,7 @@ class OpenAPIWorkflowValidatorTest {
 
     @Test
     void validateFailureActionInvalidStepId() {
-        String workflowId = "w1";
-        String stepId = "step-one";
-
-        OpenAPIWorkflowValidator validator = new OpenAPIWorkflowValidator();
-
-        Map<String, Set<String>> stepIds = new HashMap<>();
-        stepIds.put("w1", Set.of("step-one", "step-two", "step-three"));
-
-        validator.stepIds = stepIds;
+        OpenAPIWorkflowValidator v = validatorWithStepIds("w1", "step-one", "step-two", "step-three");
 
         FailureAction failureAction = new FailureAction()
                 .type("retry")
@@ -579,11 +552,7 @@ class OpenAPIWorkflowValidatorTest {
                 .retryAfter(1.5)
                 .retryLimit(3);
 
-        failureAction.addCriteria(
-                new Criterion()
-                        .context("$statusCode == 200"));
-
-        assertEquals(1, validator.validateFailureAction(workflowId, stepId, failureAction).size());
+        assertEquals(1, v.validateFailureAction("w1", "step-one", failureAction).size());
     }
 
 
@@ -728,40 +697,22 @@ class OpenAPIWorkflowValidatorTest {
 
     @Test
     void stepExists() {
-        OpenAPIWorkflowValidator validator = new OpenAPIWorkflowValidator();
-        Map<String, Set<String>> stepIds = new HashMap<>();
-        stepIds.put("w1", Set.of("step-one", "step-two", "step-three"));
-
-        validator.stepIds = stepIds;
-
-        assertTrue(validator.stepExists("w1", "step-one"));
+        assertTrue(validatorWithStepIds("w1", "step-one", "step-two", "step-three").stepExists("w1", "step-one"));
     }
 
     @Test
     void stepNotFound() {
-        OpenAPIWorkflowValidator validator = new OpenAPIWorkflowValidator();
-        Map<String, Set<String>> stepIds = new HashMap<>();
-        stepIds.put("w1", Set.of("step-one", "step-two", "step-three"));
-
-        validator.stepIds = stepIds;
-
-        assertFalse(validator.stepExists("w1", "step-dummy"));
+        assertFalse(validatorWithStepIds("w1", "step-one", "step-two", "step-three").stepExists("w1", "step-dummy"));
     }
 
     @Test
     void workflowExists() {
-        OpenAPIWorkflowValidator validator = new OpenAPIWorkflowValidator();
-        validator.workflowIds.add("w1");
-
-        assertTrue(validator.workflowExists("w1"));
+        assertTrue(validatorWithWorkflowIds("w1").workflowExists("w1"));
     }
 
     @Test
     void workflowNotFound() {
-        OpenAPIWorkflowValidator validator = new OpenAPIWorkflowValidator();
-        validator.workflowIds.add("w1");
-
-        assertFalse(validator.workflowExists("dummy"));
+        assertFalse(validatorWithWorkflowIds("w1").workflowExists("dummy"));
     }
 
     @Test
