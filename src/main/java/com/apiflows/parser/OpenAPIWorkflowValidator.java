@@ -181,24 +181,7 @@ public class OpenAPIWorkflowValidator {
             }
         }
 
-        if(step.getParameters() != null) {
-            for(Parameter parameter : step.getParameters()) {
-                if(isRuntimeExpression(parameter.getReference())) {
-                    // reference a reusable object
-                    errors.addAll(validateReusableParameter(parameter, workflowId, null));
-                } else {
-                    // parameter
-                    errors.addAll(validateParameter(parameter, workflowId, null));
-
-                    if(step.getWorkflowId() == null) {
-                        // when the step in context is NOT a workflowId the parameter IN must be defined
-                        if(!isRuntimeExpression(parameter.getName()) && parameter.getIn() == null) {
-                            errors.add("'Workflow[" + workflowId + "]' parameter IN must be defined");
-                        }
-                    }
-                }
-            }
-        }
+        errors.addAll(validateStepParameters(step, workflowId));
 
         if(step.getDependsOn() != null) {
             if(!stepExists(workflowId, step.getDependsOn())) {
@@ -640,6 +623,24 @@ public class OpenAPIWorkflowValidator {
 
     boolean isValidSourceDescriptionName(String name) {
         return Pattern.matches("^[A-Za-z0-9_\\-]+$", name);
+    }
+
+    private List<String> validateStepParameters(Step step, String workflowId) {
+        List<String> errors = new ArrayList<>();
+        if (step.getParameters() == null) {
+            return errors;
+        }
+        for (Parameter parameter : step.getParameters()) {
+            if (isRuntimeExpression(parameter.getReference())) {
+                errors.addAll(validateReusableParameter(parameter, workflowId, null));
+            } else {
+                errors.addAll(validateParameter(parameter, workflowId, null));
+                if (step.getWorkflowId() == null && !isRuntimeExpression(parameter.getName()) && parameter.getIn() == null) {
+                    errors.add("'Workflow[" + workflowId + "]' parameter IN must be defined");
+                }
+            }
+        }
+        return errors;
     }
 
     private List<String> validateGotoTarget(String stepId, String actionLabel, String targetStepId, String targetWorkflowId) {
